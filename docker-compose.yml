@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-gazer}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "6033:3306"
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 20s
+      retries: 10
+
+  gazer:
+    build: ./
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
