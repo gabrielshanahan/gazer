@@ -75,6 +75,10 @@ tasks {
             jvmTarget = "1.8"
         }
     }
+
+    bootJar {
+        layered()
+    }
 }
 
 detekt {
