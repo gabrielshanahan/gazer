@@ -85,7 +85,7 @@ tasks {
 }
 
 detekt {
-    baseline = file("${rootProject.projectDir}/config/baseline.xml")
+    baseline = file("${rootProject.projectDir}/config/detekt/baseline.xml")
     parallel = true // Builds the AST in parallel. Rules are always executed in parallel.
 }
 

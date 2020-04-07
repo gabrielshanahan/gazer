@@ -4,12 +4,12 @@ services:
   db:
     image: mysql
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE:-gazer}"
+      MYSQL_DATABASE: "${MYSQL_GAZER_DATABASE:-gazer}"
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_ROOT_HOST: '%'
       MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
     ports:
-      - "6033:3306"
+      - "3306:3306"
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d
     healthcheck:

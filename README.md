@@ -8,7 +8,8 @@ docker compose up
 ```
 
 ## Optional config
-MYSQL_DATABASE (default=gazer)
+MYSQL_GAZER_USER (default=gazer)
+MYSQL_GAZER_DATABASE (default=gazer)
 
 ## About
 - Uses layered jars to achieve faster builds
