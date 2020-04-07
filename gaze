@@ -1,0 +1,6 @@
+#!/bin/bash
+
+: "${MYSQL_ROOT_PASSWORD?"MYSQL_ROOT_PASSWORD not set"}"
+: "${MYSQL_GAZER_PASSWORD?"MYSQL_GAZER_PASSWORD not set"}"
+
+docker-compose up "$@"

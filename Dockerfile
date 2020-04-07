@@ -5,8 +5,10 @@ COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
 FROM adoptopenjdk:11-jre-hotspot
+COPY scripts/wait_for_it.sh scripts/run.sh ./
+RUN ["chmod", "+x", "./wait_for_it.sh", "./run.sh"]
 WORKDIR application
 COPY --from=builder application/dependencies/ ./
 COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/application/ ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["../run.sh"]

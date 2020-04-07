@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./initdb:/docker-entrypoint-initdb.d
+      - ./scripts/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: "/usr/bin/mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute \"SHOW DATABASES;\""
       interval: 2s
@@ -24,5 +24,9 @@ services:
       - 8080
     ports:
       - 8080:8080
+    environment:
+      MYSQL_GAZER_DATABASE: "${MYSQL_GAZER_DATABASE:-gazer}"
+      MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
     depends_on:
       - db
+    command: db:3306
