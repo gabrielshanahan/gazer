@@ -1,8 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.3.71"
-	kotlin("plugin.spring") version "1.3.71"
+    val kotlinVersion = "1.3.71"
+
+	kotlin("jvm") version kotlinVersion
+	kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.allopen") version kotlinVersion
+    kotlin("plugin.noarg") version kotlinVersion
 
 	id("org.springframework.boot") version "2.3.0.M4"
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
@@ -13,6 +17,12 @@ plugins {
 	id("org.jmailen.kotlinter") version "2.3.2"
 	id("io.gitlab.arturbosch.detekt") version "1.7.4"
 	id("org.jetbrains.dokka") version "0.10.1"
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
 }
 
 group = "io.github.gabrielshanahan"
