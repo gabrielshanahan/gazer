@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   db:
@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./scripts/db:/docker-entrypoint-initdb.d
+      - ./data/scripts:/docker-entrypoint-initdb.d
     healthcheck:
       test: "/usr/bin/mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute \"SHOW DATABASES;\""
       interval: 2s
@@ -19,7 +19,9 @@ services:
       retries: 10
 
   gazer:
-    build: ./
+    build:
+      context: .
+      dockerfile: ./data/Dockerfile
     expose:
       - 8080
     ports:
