@@ -7,6 +7,7 @@ plugins {
 	kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.noarg") version kotlinVersion
+    kotlin("plugin.jpa") version kotlinVersion
 
 	id("org.springframework.boot") version "2.3.0.M4"
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
