@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   db:
@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_HOST: '%'
       MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
     ports:
-      - "3306:3306"
+      - 3306:3306
     volumes:
       - ./data/scripts:/docker-entrypoint-initdb.d
     healthcheck:
@@ -22,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: ./data/Dockerfile
+      args:
+        wfi_args: "db:3306"
     expose:
       - 8080
     ports:
@@ -31,4 +33,3 @@ services:
       MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
     depends_on:
       - db
-    command: db:3306
