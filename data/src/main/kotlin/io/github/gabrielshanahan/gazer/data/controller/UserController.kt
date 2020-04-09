@@ -1,14 +1,11 @@
-package io.github.gabrielshanahan.gazer.controller
+package io.github.gabrielshanahan.gazer.data.controller
 
-import io.github.gabrielshanahan.gazer.model.User
-import io.github.gabrielshanahan.gazer.repository.UserRepository
+import io.github.gabrielshanahan.gazer.data.model.User
+import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
-import java.util.*
 
 @Controller
 @RequestMapping(path = ["/user"])

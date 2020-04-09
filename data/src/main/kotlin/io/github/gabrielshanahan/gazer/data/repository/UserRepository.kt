@@ -1,6 +1,6 @@
-package io.github.gabrielshanahan.gazer.repository
+package io.github.gabrielshanahan.gazer.data.repository
 
-import io.github.gabrielshanahan.gazer.model.User
+import io.github.gabrielshanahan.gazer.data.model.User
 import org.springframework.data.repository.CrudRepository
 import java.util.*
 

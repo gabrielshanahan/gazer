@@ -1,4 +1,4 @@
-package io.github.gabrielshanahan.gazer.model
+package io.github.gabrielshanahan.gazer.data.model
 
 import java.util.*
 import javax.persistence.Column
