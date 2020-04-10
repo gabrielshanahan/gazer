@@ -12,4 +12,4 @@ pluginManagement {
     }
 }
 rootProject.name = "gazer"
-include("data")
+include("data", "app")

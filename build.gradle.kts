@@ -50,6 +50,8 @@ subprojects {
         plugin("io.gitlab.arturbosch.detekt")
         plugin("org.jetbrains.dokka")
 
+        plugin("io.spring.dependency-management")
+
     }
 
     dependencies {

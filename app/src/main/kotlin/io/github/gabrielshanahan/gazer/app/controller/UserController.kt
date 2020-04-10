@@ -1,4 +1,4 @@
-package io.github.gabrielshanahan.gazer.data.controller
+package io.github.gabrielshanahan.gazer.app.controller
 
 import io.github.gabrielshanahan.gazer.data.model.User
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 @RequestMapping(path = ["/user"])
-class MainController(private val userRepository: UserRepository) {
+class UserController(private val userRepository: UserRepository) {
 
     @get:ResponseBody
     @get:GetMapping(path = ["/all"])

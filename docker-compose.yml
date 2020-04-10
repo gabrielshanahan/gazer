@@ -21,7 +21,7 @@ services:
   gazer:
     build:
       context: .
-      dockerfile: ./data/Dockerfile
+      dockerfile: ./app/Dockerfile
       args:
         wfi_args: "db:3306"
     expose:

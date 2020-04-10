@@ -1,6 +1,5 @@
-import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-
 plugins {
+    id("org.springframework.boot")
     id("io.spring.dependency-management")
 
     kotlin("plugin.spring")
@@ -16,26 +15,27 @@ configurations {
     }
 }
 
-dependencyManagement {
-    imports {
-        mavenBom(BOM_COORDINATES)
-    }
-}
-
 dependencies {
+    implementation(project(":data"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-    testRuntimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+
+    runtimeOnly("mysql:mysql-connector-java")
+
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks {
-
-    jar {
-        enabled = true
+    bootJar {
+        layered()
     }
+
 }
 
 allOpen {
