@@ -13,4 +13,4 @@ COPY --from=builder application/dependencies/ ./
 COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
-ENTRYPOINT ../wait_for_it.sh $wfi_args_env -- java org.springframework.boot.loader.JarLauncher
+ENTRYPOINT ../wait_for_it.sh $wfi_args_env -- java -Dspring.profiles.active=prod org.springframework.boot.loader.JarLauncher

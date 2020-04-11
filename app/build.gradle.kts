@@ -27,6 +27,7 @@ dependencies {
     }
 
     runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("com.h2database:h2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
@@ -34,6 +35,9 @@ dependencies {
 tasks {
     bootJar {
         layered()
+    }
+    bootRun {
+        jvmArgs = listOf("-Dspring.profiles.active=dev")
     }
 
 }

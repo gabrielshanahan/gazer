@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: ./app/Dockerfile
       args:
-        wfi_args: "db:3306"
+        wfi_args: "db:3306 -t 20"
     expose:
       - 8080
     ports:
