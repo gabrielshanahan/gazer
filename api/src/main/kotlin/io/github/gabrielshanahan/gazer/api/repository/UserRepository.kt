@@ -1,4 +1,4 @@
-package io.github.gabrielshanahan.gazer.data.repository
+package io.github.gabrielshanahan.gazer.api.repository
 
 import io.github.gabrielshanahan.gazer.data.model.User
 import java.util.*

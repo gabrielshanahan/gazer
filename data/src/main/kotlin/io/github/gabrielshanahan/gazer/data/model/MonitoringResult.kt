@@ -1,6 +1,5 @@
 package io.github.gabrielshanahan.gazer.data.model
 
-import org.hibernate.annotations.CreationTimestamp
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -10,9 +9,10 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 import javax.persistence.Temporal
 import javax.persistence.TemporalType
+import org.hibernate.annotations.CreationTimestamp
 
 @Entity
-@Table(name="monitoring_result")
+@Table(name = "monitoring_result")
 class MonitoringResult(
     id: UUID? = null,
 
@@ -20,7 +20,7 @@ class MonitoringResult(
     @Temporal(TemporalType.TIMESTAMP)
     val checked: Date,
 
-    @Column(name="http_status")
+    @Column(name = "http_status")
     val httpStatus: Int,
 
     @Lob

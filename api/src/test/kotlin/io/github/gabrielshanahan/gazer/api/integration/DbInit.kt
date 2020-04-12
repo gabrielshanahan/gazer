@@ -1,6 +1,6 @@
-package io.github.gabrielshanahan.gazer.data.integration
+package io.github.gabrielshanahan.gazer.api.integration
 
-import io.github.gabrielshanahan.gazer.data.repository.UserRepository
+import io.github.gabrielshanahan.gazer.api.repository.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
