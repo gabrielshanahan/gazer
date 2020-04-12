@@ -2,6 +2,6 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>SpreadOperator:GazerApplication.kt$(*args)</ID>
+    <ID>SpreadOperator:ApiApplication.kt$(*args)</ID>
   </Whitelist>
 </SmellBaseline>
