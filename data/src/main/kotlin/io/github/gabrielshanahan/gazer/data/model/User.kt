@@ -12,5 +12,7 @@ class User(
     val username: String,
 
     val email: String,
+
+    @Column(unique=true)
     val token: String
 ) : AbstractEntity(id)
