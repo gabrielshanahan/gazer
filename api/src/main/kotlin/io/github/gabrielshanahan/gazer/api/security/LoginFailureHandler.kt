@@ -3,15 +3,14 @@ package io.github.gabrielshanahan.gazer.api.security
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.ObjectWriter
-import org.apache.commons.logging.LogFactory
-import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import java.io.IOException
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
+import org.apache.commons.logging.LogFactory
+import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
 
 class LoginFailureHandler : AuthenticationFailureHandler {
 
@@ -20,9 +19,11 @@ class LoginFailureHandler : AuthenticationFailureHandler {
     data class FailureResponse(val message: String)
 
     @Throws(IOException::class, ServletException::class)
-    override fun onAuthenticationFailure(httpServletRequest: HttpServletRequest?,
-                                         httpServletResponse: HttpServletResponse,
-                                         e: AuthenticationException) {
+    override fun onAuthenticationFailure(
+        httpServletRequest: HttpServletRequest?,
+        httpServletResponse: HttpServletResponse,
+        e: AuthenticationException
+    ) {
         sendError(httpServletResponse, e.localizedMessage)
     }
 

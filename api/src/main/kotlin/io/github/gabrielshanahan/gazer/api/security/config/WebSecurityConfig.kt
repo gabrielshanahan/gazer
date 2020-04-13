@@ -11,11 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class WebSecurityConfig(private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint) : WebSecurityConfigurerAdapter() {
+class WebSecurityConfig(private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint) :
+    WebSecurityConfigurerAdapter() {
 
     @Bean
     @Throws(java.lang.Exception::class)
@@ -40,5 +40,4 @@ class WebSecurityConfig(private val customAuthenticationEntryPoint: CustomAuthen
         httpSecurity.addFilterBefore(hardcodedAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
         httpSecurity.headers().frameOptions().disable()
     }
-
 }

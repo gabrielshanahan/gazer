@@ -1,5 +1,8 @@
 package io.github.gabrielshanahan.gazer.api.security
 
+import javax.servlet.FilterChain
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
@@ -9,26 +12,27 @@ import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.web.filter.OncePerRequestFilter
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class HardcodedAuthenticationFilter(
-        private val authenticationManager: AuthenticationManager,
-        private val authenticationEntryPoint: AuthenticationEntryPoint
-): OncePerRequestFilter() {
+    private val authenticationManager: AuthenticationManager,
+    private val authenticationEntryPoint: AuthenticationEntryPoint
+) : OncePerRequestFilter() {
 
-    private val failureHandler: AuthenticationFailureHandler = AuthenticationEntryPointFailureHandler(authenticationEntryPoint)
+    private val failureHandler: AuthenticationFailureHandler =
+        AuthenticationEntryPointFailureHandler(authenticationEntryPoint)
 
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
 
         // Ugh, this sucks, but we really need to move on
-        if(request.requestURI.contains("h2-console") || request.requestURI.contains("actuator")) {
+        if (request.requestURI.contains("h2-console") || request.requestURI.contains("actuator")) {
             SecurityContextHolder.getContext().authentication = HardcodedAuthenticationToken(
                 "dcb20f8a-5657-4f1b-9f7f-ce65739b359e",
                 User("Batman", "dcb20f8a-5657-4f1b-9f7f-ce65739b359e", emptyList())
             )
-
         } else {
             val requestToken: String = request.getHeader("MyCustomToken") ?: ""
 

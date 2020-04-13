@@ -8,11 +8,11 @@ import javax.persistence.Entity
 class User(
     id: UUID? = null,
 
-    @Column(unique=true)
+    @Column(unique = true)
     val username: String,
 
     val email: String,
 
-    @Column(unique=true)
+    @Column(unique = true)
     val token: String
 ) : AbstractEntity(id)

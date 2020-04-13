@@ -1,7 +1,7 @@
 package io.github.gabrielshanahan.gazer.api.repository
 
 import io.github.gabrielshanahan.gazer.data.model.MonitoringResult
-import org.springframework.data.repository.CrudRepository
 import java.util.*
+import org.springframework.data.repository.CrudRepository
 
-interface MonitoringResultRepository: CrudRepository<MonitoringResult, UUID>
+interface MonitoringResultRepository : CrudRepository<MonitoringResult, UUID>

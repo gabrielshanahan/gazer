@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist>
+    <ID>LongParameterList:MonitoredEndpoint.kt$MonitoredEndpoint$( id: UUID? = null, val name: String, val url: String, @CreationTimestamp @Temporal(TemporalType.TIMESTAMP) val created: Date, @Column(name = "last_check") @Temporal(TemporalType.TIMESTAMP) val lastCheck: Date, @Column(name = "monitored_interval") val monitoredInterval: Int, @ManyToOne(optional = false) @JoinColumn val user: User )</ID>
+  </Whitelist>
+</SmellBaseline>

@@ -41,7 +41,6 @@ allprojects {
 }
 
 subprojects {
-
     apply {
 
         plugin("org.jetbrains.kotlin.jvm")
@@ -93,7 +92,7 @@ subprojects {
     }
 
     detekt {
-        baseline = file("${rootProject.projectDir}/config/detekt/baseline.xml")
+        baseline = file("config/detekt/baseline.xml")
         parallel = true // Builds the AST in parallel. Rules are always executed in parallel.
     }
 }

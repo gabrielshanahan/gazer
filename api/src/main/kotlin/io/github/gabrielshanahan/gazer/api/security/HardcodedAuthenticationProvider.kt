@@ -16,8 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.util.Assert
 
 @Configuration
-class HardcodedAuthenticationProvider(val userDetailsByTokenService: UserDetailsByTokenService)
-    : AuthenticationProvider, MessageSourceAware, InitializingBean {
+class HardcodedAuthenticationProvider(val userDetailsByTokenService: UserDetailsByTokenService) :
+    AuthenticationProvider, MessageSourceAware, InitializingBean {
 
     private val logger = LogFactory.getLog(javaClass)
 
@@ -45,8 +45,8 @@ class HardcodedAuthenticationProvider(val userDetailsByTokenService: UserDetails
         val hardToken = authentication as HardcodedAuthenticationToken
         val token = hardToken.token
 
-        if(token.isEmpty()) {
-            logger.debug("Empty token");
+        if (token.isEmpty()) {
+            logger.debug("Empty token")
             throw BadCredentialsException(messages.getMessage(
                     "HardcodedAuthenticationProvider.noCredentials",
                     "No token entered"))
@@ -56,11 +56,11 @@ class HardcodedAuthenticationProvider(val userDetailsByTokenService: UserDetails
             logger.debug("Trying to load user by token $token")
             userDetailsByTokenService.loadUserByToken(token)
         } catch (notFound: UsernameNotFoundException) {
-            logger.debug("Token '$token' not found");
+            logger.debug("Token '$token' not found")
 
             throw BadCredentialsException(messages.getMessage(
                     "HardcodedAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+                    "Bad credentials"))
         }
 
         logger.debug("Auth successful, token is $token, loaded user is $loadedUser")
@@ -69,5 +69,4 @@ class HardcodedAuthenticationProvider(val userDetailsByTokenService: UserDetails
 
     override fun supports(authentication: Class<*>): Boolean =
             HardcodedAuthenticationToken::class.java == authentication
-
 }
