@@ -19,11 +19,11 @@ class MonitoredEndpoint(
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    val created: Date,
+    val created: Date? = null,
 
     @Column(name = "last_check")
     @Temporal(TemporalType.TIMESTAMP)
-    val lastCheck: Date,
+    val lastCheck: Date? = null,
 
     @Column(name = "monitored_interval")
     val monitoredInterval: Int,

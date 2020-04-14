@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 
 @DataJpaTest
-class DbInit {
-
-    @Autowired
-    lateinit var userRepository: UserRepository
+class DatabaseInitTest(@Autowired var userRepository: UserRepository) {
 
     @Test
     fun `Users are correctly seeded`() {

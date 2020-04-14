@@ -1,0 +1,53 @@
+package io.github.gabrielshanahan.gazer.api.integration
+
+import com.ninjasquad.springmockk.MockkBean
+import io.github.gabrielshanahan.gazer.api.repository.MonitoredEndpointRepository
+import io.github.gabrielshanahan.gazer.api.repository.UserRepository
+import io.mockk.every
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+
+@WebMvcTest
+class ControllerTest(@Autowired val mockMvc: MockMvc) {
+
+    @MockkBean
+    private lateinit var userRepo: UserRepository
+
+    @MockkBean
+    private lateinit var endpointRepo: MonitoredEndpointRepository
+
+    @BeforeEach
+    fun setupMocks() {
+        every { endpointRepo.getAllByUser(SharedData.mockUser) } returns SharedData.mock.endpoints
+        every { userRepo.getByToken(SharedData.mockToken) } returns SharedData.mockUser
+    }
+
+    @Test
+    fun `List monitored endpoints works`() {
+
+        mockMvc.perform(
+            get("/monitoredEndpoints")
+                .accept(MediaType.APPLICATION_JSON)
+                .header("GazerToken", SharedData.mockToken)
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("\$.[0].user.username").value(SharedData.mock.user.username))
+            .andExpect(jsonPath("\$.[0].url").value(SharedData.mockEndpoint.url))
+    }
+
+    @Test
+    fun `Missing token returns 400`() {
+
+        mockMvc.perform(
+            get("/monitoredEndpoints")
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest)
+    }
+}
