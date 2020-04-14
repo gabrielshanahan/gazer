@@ -37,10 +37,13 @@ class SharedData(userRepo: UserRepository) {
     )
 
     companion object {
-        val mockToken = "123-abc"
-        val mockUser = User(UUID.randomUUID(), "abc", "abc@abc.com", mockToken)
+        val validMockToken = "123-abc"
+        val invalidMockToken = "invalid_token"
+
+        val mockUser = User(UUID.randomUUID(), "abc", "abc@abc.com", validMockToken)
 
         val mockEndpoint = MonitoredEndpoint(
+            id = UUID.randomUUID(),
             name = "MockMock",
             url = "http://www.mock.com",
             monitoredInterval = 15,

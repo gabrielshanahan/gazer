@@ -7,4 +7,6 @@ import org.springframework.data.repository.CrudRepository
 
 interface MonitoredEndpointRepository : CrudRepository<MonitoredEndpoint, UUID> {
     fun getAllByUser(user: User): List<MonitoredEndpoint>
+    fun getByUserAndId(user: User, id: UUID): MonitoredEndpoint?
+    fun removeByUserAndId(user: User, id: UUID): MonitoredEndpoint?
 }
