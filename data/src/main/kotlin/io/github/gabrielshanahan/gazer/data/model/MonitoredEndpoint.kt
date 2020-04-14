@@ -14,8 +14,8 @@ import org.hibernate.annotations.CreationTimestamp
 @Table(name = "monitored_endpoint")
 class MonitoredEndpoint(
     id: UUID? = null,
-    val name: String,
-    val url: String,
+    var name: String,
+    var url: String,
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -26,9 +26,16 @@ class MonitoredEndpoint(
     val lastCheck: Date? = null,
 
     @Column(name = "monitored_interval")
-    val monitoredInterval: Int,
+    var monitoredInterval: Int,
 
     @ManyToOne(optional = false)
     @JoinColumn
-    val user: User
-) : AbstractEntity(id)
+    var user: User
+) : AbstractEntity(id) {
+
+    fun copyFrom(other: MonitoredEndpoint) {
+        name = other.name
+        url = other.url
+        monitoredInterval = other.monitoredInterval
+    }
+}

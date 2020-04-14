@@ -18,15 +18,15 @@ class MonitoringResult(
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    val checked: Date,
+    var checked: Date,
 
     @Column(name = "http_status")
-    val httpStatus: Int,
+    var httpStatus: Int,
 
     @Lob
-    val payload: String,
+    var payload: String,
 
     @ManyToOne(optional = false)
     @JoinColumn
-    val endpoint: MonitoredEndpoint
+    var endpoint: MonitoredEndpoint
 ) : AbstractEntity(id)

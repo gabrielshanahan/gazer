@@ -3,7 +3,6 @@ package io.github.gabrielshanahan.gazer.api.integration
 import io.github.gabrielshanahan.gazer.api.repository.UserRepository
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.data.model.User
-import java.util.*
 
 class SharedData(userRepo: UserRepository) {
 
@@ -37,22 +36,6 @@ class SharedData(userRepo: UserRepository) {
     )
 
     companion object {
-        val validMockToken = "123-abc"
         val invalidMockToken = "invalid_token"
-
-        val mockUser = User(UUID.randomUUID(), "abc", "abc@abc.com", validMockToken)
-
-        val mockEndpoint = MonitoredEndpoint(
-            id = UUID.randomUUID(),
-            name = "MockMock",
-            url = "http://www.mock.com",
-            monitoredInterval = 15,
-            user = mockUser
-        )
-
-        val mock = UserData(
-            user = mockUser,
-            endpoints = listOf(mockEndpoint)
-        )
     }
 }

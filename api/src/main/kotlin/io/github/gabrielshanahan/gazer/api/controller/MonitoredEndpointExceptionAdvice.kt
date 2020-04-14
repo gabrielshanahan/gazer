@@ -12,14 +12,21 @@ internal class MonitoredEndpointExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(MonitoredEndpointController.InvalidGazerTokenException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun invalidGazerTokenHandler(ex: MonitoredEndpointController.InvalidGazerTokenException): String {
-        return ex.message!!
-    }
+    fun invalidGazerTokenHandler(
+        ex: MonitoredEndpointController.InvalidGazerTokenException
+    ) = ex.message!!
 
     @ResponseBody
     @ExceptionHandler(MonitoredEndpointController.MonitoredEndpointNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun monitoredEndpointNotFoundHandler(ex: MonitoredEndpointController.MonitoredEndpointNotFoundException): String {
-        return ex.message!!
-    }
+    fun monitoredEndpointNotFoundHandler(
+        ex: MonitoredEndpointController.MonitoredEndpointNotFoundException
+    ) = ex.message!!
+
+    @ResponseBody
+    @ExceptionHandler(MonitoredEndpointController.MonitoredEndpointForbidden::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    fun monitoredEndpointForbiddenHandler(
+        ex: MonitoredEndpointController.MonitoredEndpointForbidden
+    ) = ex.message!!
 }

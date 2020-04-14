@@ -26,3 +26,4 @@ MYSQL_GAZER_DATABASE (default=gazer)
 - If timeout for database startup is not enough, edit it in wfi_args in docker-compose.yml
 - has dev and prod profile - dev uses H2, and is selected automatically when running bootRun Gradle task. The prod 
 profile is selected in Dockerfile. Fails fast if no profile is selected.
+- API data format is tightly coupled to DB schema
