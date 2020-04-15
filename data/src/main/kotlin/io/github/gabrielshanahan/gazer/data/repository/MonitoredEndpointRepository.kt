@@ -1,10 +1,12 @@
-package io.github.gabrielshanahan.gazer.api.repository
+package io.github.gabrielshanahan.gazer.data.repository
 
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.data.model.User
 import java.util.*
 import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 
+@Repository
 interface MonitoredEndpointRepository : CrudRepository<MonitoredEndpoint, UUID> {
     fun getAllByUser(user: User): List<MonitoredEndpoint>
     fun getByUserAndId(user: User, id: UUID): MonitoredEndpoint?

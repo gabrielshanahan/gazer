@@ -1,8 +1,8 @@
 package io.github.gabrielshanahan.gazer.api.integration.controller
 
-import io.github.gabrielshanahan.gazer.api.integration.SharedData
-import io.github.gabrielshanahan.gazer.api.repository.MonitoredEndpointRepository
-import io.github.gabrielshanahan.gazer.api.repository.UserRepository
+import io.github.gabrielshanahan.gazer.data.DataSamples
+import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
+import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class HTTPGetTest(
     @Autowired private val userRepo: UserRepository,
     @Autowired private val monitoredEndpointRepo: MonitoredEndpointRepository
 ) {
-    val sharedData = SharedData(userRepo)
+    val sharedData = DataSamples(userRepo)
 
     @BeforeEach
     fun setup() {

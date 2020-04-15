@@ -1,9 +1,9 @@
 package io.github.gabrielshanahan.gazer.api.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.gabrielshanahan.gazer.api.integration.SharedData
-import io.github.gabrielshanahan.gazer.api.repository.MonitoredEndpointRepository
-import io.github.gabrielshanahan.gazer.api.repository.UserRepository
+import io.github.gabrielshanahan.gazer.data.DataSamples
+import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
+import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ class HTTPPutTest(
     @Autowired private val monitoredEndpointRepo: MonitoredEndpointRepository,
     @Autowired val jacksonObjectMapper: ObjectMapper
 ) {
-    val sharedData = SharedData(userRepo)
+    val sharedData = DataSamples(userRepo)
 
     @BeforeEach
     fun setup() {

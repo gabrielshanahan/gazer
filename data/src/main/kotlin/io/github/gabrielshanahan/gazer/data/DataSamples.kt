@@ -1,10 +1,10 @@
-package io.github.gabrielshanahan.gazer.api.integration
+package io.github.gabrielshanahan.gazer.data
 
-import io.github.gabrielshanahan.gazer.api.repository.UserRepository
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.data.model.User
+import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 
-class SharedData(userRepo: UserRepository) {
+class DataSamples(userRepo: UserRepository) {
 
     data class UserData(val user: User, val endpoints: List<MonitoredEndpoint>)
 
@@ -36,6 +36,6 @@ class SharedData(userRepo: UserRepository) {
     )
 
     companion object {
-        val invalidMockToken = "invalid_token"
+        const val invalidMockToken = "invalid_token"
     }
 }

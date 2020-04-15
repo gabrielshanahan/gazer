@@ -1,7 +1,8 @@
-package io.github.gabrielshanahan.gazer.api.integration
+package io.github.gabrielshanahan.gazer.data.integration
 
-import io.github.gabrielshanahan.gazer.api.repository.MonitoredEndpointRepository
-import io.github.gabrielshanahan.gazer.api.repository.UserRepository
+import io.github.gabrielshanahan.gazer.data.DataSamples
+import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
+import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +14,7 @@ final class RepositoryTest(
     @Autowired var endpointRepo: MonitoredEndpointRepository,
     @Autowired var userRepo: UserRepository
 ) {
-    private val sharedData = SharedData(userRepo)
+    private val sharedData = DataSamples(userRepo)
 
     @BeforeEach
     fun setup() {

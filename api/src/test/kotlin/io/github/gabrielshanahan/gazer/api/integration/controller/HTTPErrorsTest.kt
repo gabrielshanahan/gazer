@@ -1,6 +1,6 @@
 package io.github.gabrielshanahan.gazer.api.integration.controller
 
-import io.github.gabrielshanahan.gazer.api.integration.SharedData
+import io.github.gabrielshanahan.gazer.data.DataSamples
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -29,7 +29,7 @@ class HTTPErrorsTest(@Autowired private val mockMvc: MockMvc) {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/monitoredEndpoints")
                 .accept(MediaType.APPLICATION_JSON)
-                .header("GazerToken", SharedData.invalidMockToken)
+                .header("GazerToken", DataSamples.invalidMockToken)
         ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 }

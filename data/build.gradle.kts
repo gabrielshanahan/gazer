@@ -24,6 +24,14 @@ dependencyManagement {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        exclude(module = "junit")
+    }
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+
+    runtimeOnly("com.h2database:h2")
 }
 
 tasks {

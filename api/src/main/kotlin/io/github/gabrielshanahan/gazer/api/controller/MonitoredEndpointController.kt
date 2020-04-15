@@ -1,9 +1,9 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
-import io.github.gabrielshanahan.gazer.api.repository.MonitoredEndpointRepository
-import io.github.gabrielshanahan.gazer.api.repository.UserRepository
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.data.model.User
+import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
+import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import java.util.*
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,29 +21,6 @@ class MonitoredEndpointController(
     val userRepository: UserRepository,
     val endpointRepository: MonitoredEndpointRepository
 ) {
-
-    class InvalidGazerTokenException :
-        RuntimeException("Invalid GazerToken")
-    class MonitoredEndpointNotFoundException(id: String) :
-        RuntimeException("Monitored endpoint $id not found")
-    class MonitoredEndpointForbidden(id: String) :
-        RuntimeException("You do not have permission to access monitored endpoint $id")
-
-    private fun <R> withToken(token: String, action: (User) -> R) =
-    (userRepository.getByToken(token) ?: throw InvalidGazerTokenException()).let(action)
-
-    private fun <R> ensuringOwnership(token: String, id: String, action: (User, MonitoredEndpoint) -> R) =
-        withToken(token) { user ->
-            endpointRepository.findById(UUID.fromString(id)).orElse(null)?.let { fetchedEndpoint ->
-                if (fetchedEndpoint.user.id != user.id) {
-                    throw MonitoredEndpointForbidden(id)
-                }
-
-                action(user, fetchedEndpoint)
-            }
-        }
-
-    private infix fun <R> R?.orWhenNoneFound(action: () -> R) = this ?: action()
 
     @GetMapping("")
     fun findAll(
@@ -88,3 +65,21 @@ class MonitoredEndpointController(
         endpointRepository.deleteById(UUID.fromString(id))
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
 }
+
+private fun <R> MonitoredEndpointController.withToken(token: String, action: (User) -> R) =
+    (userRepository.getByToken(token) ?: throw InvalidGazerTokenException()).let(action)
+
+private fun <R> MonitoredEndpointController.ensuringOwnership(
+    token: String,
+    id: String,
+    action: (User, MonitoredEndpoint) -> R
+) = withToken(token) { user ->
+        endpointRepository.findById(UUID.fromString(id)).orElse(null)?.let { fetchedEndpoint ->
+            if (fetchedEndpoint.user.id != user.id) {
+                throw MonitoredEndpointForbidden(id)
+            }
+            action(user, fetchedEndpoint)
+        }
+    }
+
+private infix fun <R> R?.orWhenNoneFound(action: () -> R) = this ?: action()
