@@ -15,6 +15,8 @@ class MonitoredEndpointNotFoundException(id: String) :
     MonitoredEndpointException("Monitored endpoint $id not found")
 class MonitoredEndpointForbidden(id: String) :
     MonitoredEndpointException("You do not have permission to access monitored endpoint $id")
+class InvalidMonitoredEndpoint :
+    MonitoredEndpointException("Payload does not represent a valid MonitoredEndpoint")
 
 @ControllerAdvice
 internal class MonitoredEndpointExceptionAdvice {
@@ -27,6 +29,7 @@ internal class MonitoredEndpointExceptionAdvice {
             is InvalidGazerTokenException -> HttpStatus.UNAUTHORIZED
             is MonitoredEndpointNotFoundException -> HttpStatus.NOT_FOUND
             is MonitoredEndpointForbidden -> HttpStatus.FORBIDDEN
+            is InvalidMonitoredEndpoint -> HttpStatus.BAD_REQUEST
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
     )

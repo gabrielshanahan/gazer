@@ -1,5 +1,7 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
+import io.github.gabrielshanahan.gazer.api.dto.MonitoredEndpointDTO
+import io.github.gabrielshanahan.gazer.api.dto.asDTO
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.data.model.User
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
@@ -25,7 +27,11 @@ class MonitoredEndpointController(
     @GetMapping("")
     fun findAll(
         @RequestHeader(value = "GazerToken") token: String
-    ): List<MonitoredEndpoint> = withToken(token) { endpointRepository.getAllByUser(it) }
+    ): List<MonitoredEndpointDTO> = withToken(token) {
+        endpointRepository
+            .getAllByUser(it)
+            .map(MonitoredEndpoint::asDTO)
+    }
 
     /**
      * TODO: Add validation
@@ -33,29 +39,40 @@ class MonitoredEndpointController(
     @PostMapping("")
     fun create(
         @RequestHeader(value = "GazerToken") token: String,
-        @RequestBody endpoint: MonitoredEndpoint
-    ): MonitoredEndpoint = withToken(token) {
-        endpoint.user = it
-        endpointRepository.save(endpoint)
+        @RequestBody endpoint: MonitoredEndpointDTO
+    ): MonitoredEndpointDTO = withToken(token) {
+
+        if (!endpoint.isValidEntity()) {
+            throw InvalidMonitoredEndpoint()
+        }
+        val persistedEndpoint = MonitoredEndpoint(
+            name = endpoint.name!!,
+            url = endpoint.url!!,
+            monitoredInterval = endpoint.monitoredInterval!!,
+            user = it
+        )
+        endpointRepository.save(persistedEndpoint).asDTO()
     }
 
     @GetMapping("/{id}")
     fun findById(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String
-    ): MonitoredEndpoint = withToken(token) {
+    ): MonitoredEndpointDTO = withToken(token) {
         endpointRepository.getByUserAndId(it, UUID.fromString(id)) ?: throw MonitoredEndpointNotFoundException(id)
-    }
+    }.asDTO()
 
     @PutMapping("/{id}")
     fun replaceEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String,
-        @RequestBody endpoint: MonitoredEndpoint
-    ): MonitoredEndpoint = ensuringOwnership(token, id) { _, fetchedEndpoint ->
-        fetchedEndpoint.copyFrom(endpoint)
-        endpointRepository.save(fetchedEndpoint)
-    } orWhenNoneFound { endpointRepository.save(endpoint) }
+        @RequestBody endpoint: MonitoredEndpointDTO
+    ): MonitoredEndpointDTO = ensuringOwnership(token, id) { _, fetchedEndpoint ->
+
+        endpointRepository.save(endpoint transferTo fetchedEndpoint).asDTO()
+    } orWhenNoneFound {
+        create(token, endpoint)
+    }
 
     @DeleteMapping("/{id}")
     fun deleteEndpoint(
@@ -67,19 +84,23 @@ class MonitoredEndpointController(
 }
 
 private fun <R> MonitoredEndpointController.withToken(token: String, action: (User) -> R) =
-    (userRepository.getByToken(token) ?: throw InvalidGazerTokenException()).let(action)
+    (userRepository.getByToken(token) ?: throw InvalidGazerTokenException())
+        .let(action)
 
 private fun <R> MonitoredEndpointController.ensuringOwnership(
     token: String,
     id: String,
     action: (User, MonitoredEndpoint) -> R
 ) = withToken(token) { user ->
-        endpointRepository.findById(UUID.fromString(id)).orElse(null)?.let { fetchedEndpoint ->
-            if (fetchedEndpoint.user.id != user.id) {
-                throw MonitoredEndpointForbidden(id)
+        endpointRepository
+            .findById(UUID.fromString(id))
+            .orElse(null)
+            ?.let { fetchedEndpoint ->
+                if (fetchedEndpoint.user.id != user.id) {
+                    throw MonitoredEndpointForbidden(id)
+                }
+                action(user, fetchedEndpoint)
             }
-            action(user, fetchedEndpoint)
-        }
     }
 
 private infix fun <R> R?.orWhenNoneFound(action: () -> R) = this ?: action()

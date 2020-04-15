@@ -1,11 +1,11 @@
 package io.github.gabrielshanahan.gazer.data.repository
 
 import io.github.gabrielshanahan.gazer.data.model.User
-import java.util.*
-import org.springframework.data.repository.CrudRepository
+import java.util.UUID
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : CrudRepository<User, UUID> {
+interface UserRepository : JpaRepository<User, UUID> {
     fun getByToken(token: String): User?
 }

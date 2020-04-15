@@ -1,10 +1,13 @@
 package io.github.gabrielshanahan.gazer.data.model
 
 import java.util.*
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.persistence.Temporal
 import javax.persistence.TemporalType
@@ -25,17 +28,18 @@ class MonitoredEndpoint(
     @Temporal(TemporalType.TIMESTAMP)
     val lastCheck: Date? = null,
 
+    @OneToMany(
+        mappedBy = "monitoredEndpoint",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    val monitoringResults: List<MonitoringResult> = emptyList(),
+
     @Column(name = "monitored_interval")
     var monitoredInterval: Int,
 
     @ManyToOne(optional = false)
     @JoinColumn
-    var user: User
-) : AbstractEntity(id) {
-
-    fun copyFrom(other: MonitoredEndpoint) {
-        name = other.name
-        url = other.url
-        monitoredInterval = other.monitoredInterval
-    }
-}
+    val user: User
+) : AbstractEntity(id)

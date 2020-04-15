@@ -71,7 +71,6 @@ class HTTPPutTest(
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.batman.user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.name").value(endpoint.name))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.id").value(endpoint.id.toString()))
     }
 
     @Test

@@ -3,7 +3,7 @@ package io.github.gabrielshanahan.gazer.data.model
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.JoinColumn
+import javax.persistence.FetchType
 import javax.persistence.Lob
 import javax.persistence.ManyToOne
 import javax.persistence.Table
@@ -26,7 +26,6 @@ class MonitoringResult(
     @Lob
     var payload: String,
 
-    @ManyToOne(optional = false)
-    @JoinColumn
-    var endpoint: MonitoredEndpoint
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    var monitoredEndpoint: MonitoredEndpoint
 ) : AbstractEntity(id)
