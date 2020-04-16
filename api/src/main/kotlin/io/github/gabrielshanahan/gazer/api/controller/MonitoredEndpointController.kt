@@ -74,7 +74,7 @@ class MonitoredEndpointController(
         @PathVariable id: String,
         @RequestBody endpoint: MonitoredEndpointDTO
     ): MonitoredEndpointDTO = ensuringOwnership(token, id) { _, fetchedEndpoint ->
-        endpointRepository.save(endpoint transferTo fetchedEndpoint).asDTO()
+        endpoint transferTo fetchedEndpoint into endpointRepository::save into MonitoredEndpoint::asDTO
     } orWhenNoneFound {
         // Is there a better way?
         val violations = validator.validate(endpoint, Default::class.java, OnCreate::class.java)
