@@ -18,8 +18,6 @@ data class UserDTO(
     }
 
     override infix fun transferTo(entity: User): User = entity
-
-    override fun isValidEntity(): Boolean = null !in listOf(username, email, token)
 }
 
 fun User.asDTO() = UserDTO().apply { fromEntity(this@asDTO) }

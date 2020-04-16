@@ -9,6 +9,7 @@ plugins {
     kotlin("plugin.jpa")
 }
 
+//TODO: Does all this need to be here?
 val developmentOnly by configurations.creating
 configurations {
     runtimeClasspath {

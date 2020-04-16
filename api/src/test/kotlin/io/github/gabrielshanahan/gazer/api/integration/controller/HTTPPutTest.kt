@@ -1,6 +1,8 @@
 package io.github.gabrielshanahan.gazer.api.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.gabrielshanahan.gazer.api.dto.MonitoredEndpointDTO
+import io.github.gabrielshanahan.gazer.api.dto.asDTO
 import io.github.gabrielshanahan.gazer.data.DataSamples
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
@@ -38,9 +40,11 @@ class HTTPPutTest(
     @Test
     fun `Updating an existing monitored endpoint works`() {
         val endpoint = sharedData.applifting.endpoints.first()
-        endpoint.name = "A new name"
+        val payload = MonitoredEndpointDTO()
+        payload.name = null
+        payload.monitoredInterval = 100
 
-        val json = jacksonObjectMapper.writeValueAsString(endpoint)
+        val json = jacksonObjectMapper.writeValueAsString(payload)
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/monitoredEndpoints/${endpoint.id}")
@@ -50,9 +54,15 @@ class HTTPPutTest(
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.applifting.user.username))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.name").value(endpoint.name))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.id").value(endpoint.id.toString()))
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.applifting.user.username)
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("\$.name").value(endpoint.name)
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("\$.monitoredInterval").value(payload.monitoredInterval!!)
+            )
     }
 
     @Test
@@ -69,8 +79,12 @@ class HTTPPutTest(
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.batman.user.username))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.name").value(endpoint.name))
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.batman.user.username)
+            )
+            .andExpect(
+                MockMvcResultMatchers.jsonPath("\$.name").value(endpoint.name)
+            )
     }
 
     @Test
@@ -86,5 +100,21 @@ class HTTPPutTest(
                 .header("GazerToken", sharedData.batman.user.token)
         )
             .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
+    fun `Creating invalid monitored endpoints doesn't work`() {
+        val endpoint = sharedData.batman.endpoints.first().asDTO()
+        endpoint.name = ""
+        endpoint.monitoredInterval = null
+
+        val json = jacksonObjectMapper.writeValueAsString(endpoint)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/monitoredEndpoints/${endpoint.id}")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("GazerToken", sharedData.batman.user.token)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 }

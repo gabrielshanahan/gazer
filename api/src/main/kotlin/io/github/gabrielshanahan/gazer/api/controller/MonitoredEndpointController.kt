@@ -2,11 +2,21 @@ package io.github.gabrielshanahan.gazer.api.controller
 
 import io.github.gabrielshanahan.gazer.api.dto.MonitoredEndpointDTO
 import io.github.gabrielshanahan.gazer.api.dto.asDTO
+import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
+import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden
+import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
+import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.data.model.User
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
+import io.github.gabrielshanahan.gazer.func.into
 import java.util.*
+import javax.validation.ConstraintViolationException
+import javax.validation.Valid
+import javax.validation.Validator
+import javax.validation.groups.Default
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,9 +29,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/monitoredEndpoints")
+@Validated
 class MonitoredEndpointController(
     val userRepository: UserRepository,
-    val endpointRepository: MonitoredEndpointRepository
+    val endpointRepository: MonitoredEndpointRepository,
+    val validator: Validator
 ) {
 
     @GetMapping("")
@@ -33,25 +45,19 @@ class MonitoredEndpointController(
             .map(MonitoredEndpoint::asDTO)
     }
 
-    /**
-     * TODO: Add validation
-     */
+    @Validated(Default::class, OnCreate::class)
     @PostMapping("")
     fun create(
         @RequestHeader(value = "GazerToken") token: String,
-        @RequestBody endpoint: MonitoredEndpointDTO
+        @Valid @RequestBody endpoint: MonitoredEndpointDTO
     ): MonitoredEndpointDTO = withToken(token) {
 
-        if (!endpoint.isValidEntity()) {
-            throw InvalidMonitoredEndpoint()
-        }
-        val persistedEndpoint = MonitoredEndpoint(
+        MonitoredEndpoint(
             name = endpoint.name!!,
             url = endpoint.url!!,
             monitoredInterval = endpoint.monitoredInterval!!,
             user = it
-        )
-        endpointRepository.save(persistedEndpoint).asDTO()
+        ) into endpointRepository::save into MonitoredEndpoint::asDTO
     }
 
     @GetMapping("/{id}")
@@ -68,9 +74,13 @@ class MonitoredEndpointController(
         @PathVariable id: String,
         @RequestBody endpoint: MonitoredEndpointDTO
     ): MonitoredEndpointDTO = ensuringOwnership(token, id) { _, fetchedEndpoint ->
-
         endpointRepository.save(endpoint transferTo fetchedEndpoint).asDTO()
     } orWhenNoneFound {
+        // Is there a better way?
+        val violations = validator.validate(endpoint, Default::class.java, OnCreate::class.java)
+        if (violations.isNotEmpty()) {
+            throw ConstraintViolationException(violations)
+        }
         create(token, endpoint)
     }
 

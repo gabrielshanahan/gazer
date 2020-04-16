@@ -2,6 +2,6 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>LongParameterList:MonitoredEndpoint.kt$MonitoredEndpoint$( id: UUID? = null, var name: String, var url: String, @CreationTimestamp @Temporal(TemporalType.TIMESTAMP) val created: Date? = null, @Column(name = "last_check") @Temporal(TemporalType.TIMESTAMP) val lastCheck: Date? = null, @Column(name = "monitored_interval") var monitoredInterval: Int, @ManyToOne(optional = false) @JoinColumn var user: User )</ID>
+    <ID>LongParameterList:MonitoredEndpoint.kt$MonitoredEndpoint$( id: UUID? = null, var name: String, var url: String, @CreationTimestamp @Temporal(TemporalType.TIMESTAMP) val created: Date? = null, @Column(name = "last_check") @Temporal(TemporalType.TIMESTAMP) val lastCheck: Date? = null, @OneToMany( mappedBy = "monitoredEndpoint", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true ) val monitoringResults: List&lt;MonitoringResult&gt; = emptyList(), @Column(name = "monitored_interval") var monitoredInterval: Int, @ManyToOne(optional = false) @JoinColumn val user: User )</ID>
   </Whitelist>
 </SmellBaseline>
