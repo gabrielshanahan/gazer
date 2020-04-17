@@ -13,7 +13,7 @@ import org.hibernate.annotations.CreationTimestamp
 
 @Entity
 @Table(name = "monitoring_result")
-class MonitoringResult(
+class MonitoringResultEntity(
     id: UUID? = null,
 
     @CreationTimestamp
@@ -27,5 +27,5 @@ class MonitoringResult(
     var payload: String,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    var monitoredEndpoint: MonitoredEndpoint
+    var monitoredEndpoint: MonitoredEndpointEntity
 ) : AbstractEntity(id)

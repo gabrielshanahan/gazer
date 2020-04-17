@@ -21,11 +21,6 @@ final class RepositoryTest(
         endpointRepo.saveAll(listOf(sharedData.googleEndpoint, sharedData.yahooEndpoint))
     }
 
-//    @AfterEach
-//    fun teardown() {
-//        endpointRepo.deleteAll()
-//    }
-
     @Test
     fun `Filtering by user works as expected`() {
 

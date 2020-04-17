@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -43,9 +44,9 @@ class HTTPGetTest(
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.[0].user.username")
+            .andExpect(MockMvcResultMatchers.jsonPath("\$._embedded.monitoredEndpointList[0].user.username")
                 .value(sharedData.applifting.user.username))
-            .andExpect(MockMvcResultMatchers.jsonPath("\$.[0].url")
+            .andExpect(MockMvcResultMatchers.jsonPath("\$._embedded.monitoredEndpointList[0].url")
                 .value(sharedData.applifting.endpoints.first().url))
     }
 
@@ -58,7 +59,7 @@ class HTTPGetTest(
                 .header("GazerToken", sharedData.applifting.user.token)
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.content().contentType(HAL_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username")
                 .value(sharedData.applifting.user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.url")

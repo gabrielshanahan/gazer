@@ -1,7 +1,7 @@
 package io.github.gabrielshanahan.gazer.api.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.gabrielshanahan.gazer.api.dto.asDTO
+import io.github.gabrielshanahan.gazer.api.model.asDTO
 import io.github.gabrielshanahan.gazer.data.DataSamples
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -47,7 +48,7 @@ class HTTPPostTest(
                 .header("GazerToken", sharedData.batman.user.token)
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.content().contentType(HAL_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.batman.user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.id").isNotEmpty)
     }

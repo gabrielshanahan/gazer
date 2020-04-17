@@ -2,8 +2,8 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>MagicNumber:MonitoredEndpointDTO.kt$MonitoredEndpointDTO$10</ID>
+    <ID>MagicNumber:MonitoredEndpoint.kt$MonitoredEndpoint$10</ID>
     <ID>SpreadOperator:ApiApplication.kt$(*args)</ID>
-    <ID>UnnecessaryAbstractClass:AbstractDTO.kt$AbstractDTO&lt;T&gt;</ID>
+    <ID>UnnecessaryAbstractClass:AbstractModel.kt$AbstractModel&lt;T&gt;</ID>
   </Whitelist>
 </SmellBaseline>

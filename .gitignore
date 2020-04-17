@@ -6,3 +6,6 @@ build
 
 # Ignore IDEA files
 .idea
+
+# Ignore Gradle properties
+local.properties

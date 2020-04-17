@@ -15,7 +15,7 @@ import org.hibernate.annotations.CreationTimestamp
 
 @Entity
 @Table(name = "monitored_endpoint")
-class MonitoredEndpoint(
+class MonitoredEndpointEntity(
     id: UUID? = null,
     var name: String,
     var url: String,
@@ -34,12 +34,12 @@ class MonitoredEndpoint(
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
-    val monitoringResults: List<MonitoringResult> = emptyList(),
+    val monitoringResults: List<MonitoringResultEntity> = emptyList(),
 
     @Column(name = "monitored_interval")
     var monitoredInterval: Int,
 
     @ManyToOne(optional = false)
     @JoinColumn
-    val user: User
+    val user: UserEntity
 ) : AbstractEntity(id)

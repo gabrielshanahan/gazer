@@ -3,9 +3,11 @@ package io.github.gabrielshanahan.gazer.data.model
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.Table
 
 @Entity
-class User(
+@Table(name = "user")
+class UserEntity(
     id: UUID? = null,
 
     @Column(unique = true)

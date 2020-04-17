@@ -1,15 +1,15 @@
-package io.github.gabrielshanahan.gazer.api.dto
+package io.github.gabrielshanahan.gazer.api.model
 
 import io.github.gabrielshanahan.gazer.api.validation.NullOrNotBlank
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpoint
+import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import java.util.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
 
-data class MonitoredEndpointDTO(
+data class MonitoredEndpoint(
     var id: UUID? = null,
 
     @get:NullOrNotBlank
@@ -29,10 +29,10 @@ data class MonitoredEndpointDTO(
     @get:NotNull(groups = [OnCreate::class])
     var monitoredInterval: Int? = null,
 
-    var user: UserDTO? = null
-) : AbstractDTO<MonitoredEndpoint>() {
+    var user: User? = null
+) : AbstractModel<MonitoredEndpointEntity>() {
 
-    override fun fromEntity(entity: MonitoredEndpoint) {
+    override fun fromEntity(entity: MonitoredEndpointEntity) {
         id = entity.id
         name = entity.name
         url = entity.url
@@ -42,7 +42,7 @@ data class MonitoredEndpointDTO(
         user = entity.user.asDTO()
     }
 
-    override fun transferTo(entity: MonitoredEndpoint): MonitoredEndpoint {
+    override fun transferTo(entity: MonitoredEndpointEntity): MonitoredEndpointEntity {
         entity.name = name ?: entity.name
         entity.url = url ?: entity.url
         entity.monitoredInterval = monitoredInterval ?: entity.monitoredInterval
@@ -51,4 +51,4 @@ data class MonitoredEndpointDTO(
     }
 }
 
-fun MonitoredEndpoint.asDTO() = MonitoredEndpointDTO().apply { fromEntity(this@asDTO) }
+fun MonitoredEndpointEntity.asDTO() = MonitoredEndpoint().apply { fromEntity(this@asDTO) }
