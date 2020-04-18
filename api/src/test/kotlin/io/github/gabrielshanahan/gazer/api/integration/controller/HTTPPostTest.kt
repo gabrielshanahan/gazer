@@ -1,7 +1,7 @@
 package io.github.gabrielshanahan.gazer.api.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.gabrielshanahan.gazer.api.model.asDTO
+import io.github.gabrielshanahan.gazer.api.model.asModel
 import io.github.gabrielshanahan.gazer.data.DataSamples
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
@@ -47,7 +47,7 @@ class HTTPPostTest(
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("GazerToken", sharedData.batman.user.token)
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.content().contentType(HAL_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username").value(sharedData.batman.user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.id").isNotEmpty)
@@ -68,7 +68,7 @@ class HTTPPostTest(
 
     @Test
     fun `Saving invalid monitored endpoint doesn't works`() {
-        val endpoint = sharedData.batman.endpoints.first().asDTO()
+        val endpoint = sharedData.batman.endpoints.first().asModel()
         endpoint.name = ""
 
         val json = jacksonObjectMapper.writeValueAsString(endpoint)

@@ -20,4 +20,4 @@ data class User(
     override infix fun transferTo(entity: UserEntity): UserEntity = entity
 }
 
-fun UserEntity.asDTO() = User().apply { fromEntity(this@asDTO) }
+fun UserEntity.asModel() = User().apply { fromEntity(this@asModel) }

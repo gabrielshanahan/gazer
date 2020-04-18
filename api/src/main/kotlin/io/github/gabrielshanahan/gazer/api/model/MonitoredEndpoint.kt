@@ -39,7 +39,7 @@ data class MonitoredEndpoint(
         created = entity.created
         lastCheck = entity.lastCheck
         monitoredInterval = entity.monitoredInterval
-        user = entity.user.asDTO()
+        user = entity.user.asModel()
     }
 
     override fun transferTo(entity: MonitoredEndpointEntity): MonitoredEndpointEntity {
@@ -51,4 +51,4 @@ data class MonitoredEndpoint(
     }
 }
 
-fun MonitoredEndpointEntity.asDTO() = MonitoredEndpoint().apply { fromEntity(this@asDTO) }
+fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint().apply { fromEntity(this@asModel) }

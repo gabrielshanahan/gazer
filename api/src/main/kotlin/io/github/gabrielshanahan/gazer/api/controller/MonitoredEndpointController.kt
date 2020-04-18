@@ -1,9 +1,11 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
-import io.github.gabrielshanahan.gazer.api.controller.resources.MonitoredEndpointModelAssembler
+import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointResourceAssembler
+import io.github.gabrielshanahan.gazer.api.controller.response.ModelResponse
+import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointResponseAssembler
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.MonitoredEndpoint
-import io.github.gabrielshanahan.gazer.api.model.asDTO
+import io.github.gabrielshanahan.gazer.api.model.asModel
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
@@ -14,9 +16,6 @@ import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 import javax.validation.Validator
 import javax.validation.groups.Default
-import org.springframework.hateoas.CollectionModel
-import org.springframework.hateoas.EntityModel
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -35,61 +34,69 @@ internal class MonitoredEndpointController(
     val userRepository: UserRepository,
     val endpointRepository: MonitoredEndpointRepository,
     val validator: Validator,
-    val resourceAssembler: MonitoredEndpointModelAssembler
+    val resourceAssembler: MonitoredEndpointResourceAssembler,
+    val responseAssembler: MonitoredEndpointResponseAssembler
 ) {
 
     @GetMapping("")
     fun findAll(
         @RequestHeader(value = "GazerToken") token: String
-    ): CollectionModel<EntityModel<MonitoredEndpoint>> = withToken(token) { user ->
+    ) = withAuthedUser(token) { user ->
         endpointRepository
             .getAllByUser(user)
-            .map { it.asDTO() into resourceAssembler::toModel }
-    } into {
-        CollectionModel.of(
-            it,
-            WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(MonitoredEndpointController::class.java).findAll("")
-            ).withSelfRel()
-        )
-    }
+            .map(MonitoredEndpointEntity::asModel).toMutableList() into
+            resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
 
-    @Validated(Default::class, OnCreate::class)
-    @PostMapping("")
-    fun create(
-        @RequestHeader(value = "GazerToken") token: String,
-        @Valid @RequestBody endpoint: MonitoredEndpoint
-    ): EntityModel<MonitoredEndpoint> = withToken(token) {
-        MonitoredEndpointEntity(
-            name = endpoint.name!!,
-            url = endpoint.url!!,
-            monitoredInterval = endpoint.monitoredInterval!!,
-            user = it
-        ) into endpointRepository::save into MonitoredEndpointEntity::asDTO into resourceAssembler::toModel
+//        endpointRepository
+//            .getAllByUser(user)
+//            .map { it.asModel() into resourceAssembler::toModel }
+//    } into {
+//        CollectionModel.of(
+//            it,
+//            WebMvcLinkBuilder.linkTo(
+//                WebMvcLinkBuilder.methodOn(MonitoredEndpointController::class.java).findAll("")
+//            ).withSelfRel()
+//        )
     }
 
     @GetMapping("/{id}")
     fun findById(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String
-    ): EntityModel<MonitoredEndpoint> = ensuringOwnership(token, id) { _, endpoint ->
-        endpoint.asDTO() into resourceAssembler::toModel
+    ): ModelResponse = authAndFind(token, id) { endpoint ->
+        endpoint into resourceAssembler::toModel into responseAssembler::toOkResponse
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
+
+    @Validated(Default::class, OnCreate::class)
+    @PostMapping("")
+    fun create(
+        @RequestHeader(value = "GazerToken") token: String,
+        @Valid @RequestBody endpoint: MonitoredEndpoint
+    ): ModelResponse = withAuthedUser(token) { user ->
+        MonitoredEndpointEntity(
+            name = endpoint.name!!,
+            url = endpoint.url!!,
+            monitoredInterval = endpoint.monitoredInterval!!,
+            user = user
+        ) into endpointRepository::save into resourceAssembler::toModel into responseAssembler::toCreatedResponse
+    }
 
     @PutMapping("/{id}")
     fun replaceEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String,
         @RequestBody endpoint: MonitoredEndpoint
-    ): EntityModel<MonitoredEndpoint> = ensuringOwnership(token, id) { _, fetchedEndpoint ->
-        endpoint transferTo fetchedEndpoint into endpointRepository::save into
-            MonitoredEndpointEntity::asDTO into resourceAssembler::toModel
+    ): ModelResponse = authAndFind(token, id) { fetchedEndpoint ->
+        endpoint transferTo fetchedEndpoint into
+            endpointRepository::save into resourceAssembler::toModel into responseAssembler::toUpdatedResponse
     } orWhenNoneFound {
         // Is there a better way?
-        val violations = validator.validate(endpoint, Default::class.java, OnCreate::class.java)
-        if (violations.isNotEmpty()) {
-            throw ConstraintViolationException(violations)
+        validator.validate(endpoint, Default::class.java, OnCreate::class.java) into {
+            if (it.isNotEmpty()) {
+                throw ConstraintViolationException(it)
+            }
         }
+
         create(token, endpoint)
     }
 
@@ -97,7 +104,8 @@ internal class MonitoredEndpointController(
     fun deleteEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String
-    ) = ensuringOwnership(token, id) { _, _ ->
+    ): ModelResponse = authAndFind(token, id) {
         endpointRepository.deleteById(UUID.fromString(id))
+        responseAssembler.noContentResponse()
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
 }

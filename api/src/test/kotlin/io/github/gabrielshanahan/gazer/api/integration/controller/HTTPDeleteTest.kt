@@ -39,7 +39,7 @@ class HTTPDeleteTest(
             MockMvcRequestBuilders.delete("/monitoredEndpoints/${sharedData.applifting.endpoints.first().id}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("GazerToken", sharedData.applifting.user.token)
-        ).andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent)
     }
 
     @Test
