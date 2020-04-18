@@ -1,5 +1,7 @@
 package io.github.gabrielshanahan.gazer.api.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY
 import io.github.gabrielshanahan.gazer.api.validation.NullOrNotBlank
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
@@ -10,6 +12,7 @@ import javax.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
 
 data class MonitoredEndpoint(
+    @get:JsonProperty(access = READ_ONLY)
     var id: UUID? = null,
 
     @get:NullOrNotBlank
@@ -21,7 +24,10 @@ data class MonitoredEndpoint(
     @get:NotNull(groups = [OnCreate::class])
     var url: String? = null,
 
+    @get:JsonProperty(access = READ_ONLY)
     var created: Date? = null,
+
+    @get:JsonProperty(access = READ_ONLY)
     var lastCheck: Date? = null,
 
     // Is there a better way?
@@ -29,6 +35,7 @@ data class MonitoredEndpoint(
     @get:NotNull(groups = [OnCreate::class])
     var monitoredInterval: Int? = null,
 
+    @get:JsonProperty(access = READ_ONLY)
     var user: User? = null
 ) : AbstractModel<MonitoredEndpointEntity>() {
 
