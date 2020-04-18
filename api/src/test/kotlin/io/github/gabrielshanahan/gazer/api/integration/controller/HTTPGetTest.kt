@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE
+import org.springframework.hateoas.MediaTypes.HAL_FORMS_JSON
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -59,7 +59,7 @@ class HTTPGetTest(
                 .header("GazerToken", sharedData.applifting.user.token)
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().contentType(HAL_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.content().contentType(HAL_FORMS_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.user.username")
                 .value(sharedData.applifting.user.username))
             .andExpect(MockMvcResultMatchers.jsonPath("\$.url")

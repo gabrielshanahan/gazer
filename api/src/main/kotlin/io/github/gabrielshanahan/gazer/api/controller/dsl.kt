@@ -4,12 +4,12 @@ import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.model.UserEntity
+import java.util.*
+import kotlin.reflect.KClass
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
-import java.util.*
-import kotlin.reflect.KClass
 
 internal fun <R> MonitoredEndpointController.withAuthedUser(token: String, action: (UserEntity) -> R) =
     (userRepository.getByToken(token) ?: throw InvalidGazerTokenException())
@@ -32,7 +32,7 @@ internal fun <R> MonitoredEndpointController.authAndFind(
 
 internal infix fun <R> R?.orWhenNoneFound(action: () -> R): R = this ?: action()
 
-internal class HyperlinkBuilder<C: Any>(val klass: KClass<C>) {
+internal class HyperlinkBuilder<C : Any>(val klass: KClass<C>) {
 
     internal inline fun <R : Any> selfLink(action: C.() -> R): Link =
         linkTo(methodOn(klass.java).action()).withSelfRel()
@@ -44,5 +44,5 @@ internal class HyperlinkBuilder<C: Any>(val klass: KClass<C>) {
         andAffordance(afford(methodOn(klass.java).action()))
 }
 
-internal inline fun <reified C: Any> hyperlinks(action: HyperlinkBuilder<C>.() -> Unit)
-    = HyperlinkBuilder(C::class).action()
+internal inline fun <reified C : Any> hyperlinks(action: HyperlinkBuilder<C>.() -> Unit) =
+    HyperlinkBuilder(C::class).action()

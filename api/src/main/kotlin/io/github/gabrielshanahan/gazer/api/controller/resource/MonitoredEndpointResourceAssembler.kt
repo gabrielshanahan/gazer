@@ -9,10 +9,8 @@ import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
-import org.springframework.hateoas.IanaLinkRelations
 import org.springframework.hateoas.server.RepresentationModelAssembler
 import org.springframework.hateoas.server.mvc.add
-import org.springframework.hateoas.server.mvc.andAffordances
 import org.springframework.stereotype.Component
 
 internal typealias MonitoredEndpointModel = EntityModel<MonitoredEndpoint>

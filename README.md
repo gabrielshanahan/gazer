@@ -29,4 +29,6 @@ profile is selected in Dockerfile. Fails fast if no profile is selected.
 - API is permissive - on update will accept even fields we don't update
 - checkInterval is restricted to >10 seconds to prevent DOSing (although still possible to create many users each with the same endpoint)
 - custom messages not implemented 
+- [Problems](https://docs.spring.io/spring-hateoas/docs/1.1.0.M3/reference/html/#mediatypes.http-problem) are not 
+implemented, errors are returned with content-type JSON, not HAL_FORMS_JSON
 
