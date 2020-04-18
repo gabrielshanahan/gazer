@@ -1,6 +1,8 @@
 package io.github.gabrielshanahan.gazer.api.controller.resource
 
 import io.github.gabrielshanahan.gazer.api.controller.MonitoredEndpointController
+import io.github.gabrielshanahan.gazer.api.controller.RootController
+import io.github.gabrielshanahan.gazer.api.controller.hyperlinks
 import io.github.gabrielshanahan.gazer.api.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.api.model.asModel
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
@@ -20,22 +22,20 @@ internal typealias MonitoredEndpointCollectionModel = CollectionModel<MonitoredE
 class MonitoredEndpointResourceAssembler : RepresentationModelAssembler<MonitoredEndpoint, MonitoredEndpointModel> {
 
     override fun toModel(endpoint: MonitoredEndpoint): MonitoredEndpointModel =
-        EntityModel.of(endpoint) into {
-            it.add(MonitoredEndpointController::class) {
-                linkTo {
-                    findById("", endpoint.id.toString())
-                } withRel IanaLinkRelations.SELF andAffordances {
-                    afford<MonitoredEndpointController> {
+        EntityModel.of(endpoint).apply {
+            hyperlinks<MonitoredEndpointController> {
+                add(
+                    selfLink {
+                        getById("", endpoint.id.toString())
+                    } andAfford {
                         replaceEndpoint("", endpoint.id.toString(), MonitoredEndpoint())
-                    }
-                    afford<MonitoredEndpointController> {
+                    } andAfford {
                         deleteEndpoint("", endpoint.id.toString())
+                    },
+                    link {
+                        "monitoredEndpoints" to getAll("")
                     }
-                }
-
-                linkTo {
-                    findAll("")
-                } withRel "monitoredEndpoints"
+                )
             }
         }
 
@@ -43,11 +43,19 @@ class MonitoredEndpointResourceAssembler : RepresentationModelAssembler<Monitore
         endpointEntity into MonitoredEndpointEntity::asModel into ::toModel
 
     override fun toCollectionModel(endpoints: MutableIterable<MonitoredEndpoint>): MonitoredEndpointCollectionModel =
-        CollectionModel.of(endpoints.map(::toModel)) into {
-            it.add(MonitoredEndpointController::class) {
-                linkTo {
-                    findAll("")
-                } withRel IanaLinkRelations.SELF
+        CollectionModel.of(endpoints.map(::toModel)).apply {
+            hyperlinks<MonitoredEndpointController> {
+                add(selfLink {
+                    getAll("")
+                } andAfford {
+                    createEndpoint("", MonitoredEndpoint())
+                })
+            }
+
+            hyperlinks<RootController> {
+                add(link {
+                    "root" to root()
+                })
             }
         }
 }

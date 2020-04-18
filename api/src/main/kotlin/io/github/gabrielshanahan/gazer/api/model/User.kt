@@ -1,5 +1,6 @@
 package io.github.gabrielshanahan.gazer.api.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.gabrielshanahan.gazer.data.model.UserEntity
 import java.util.*
 
@@ -7,6 +8,7 @@ data class User(
     var id: UUID? = null,
     var username: String? = null,
     var email: String? = null,
+    @JsonIgnore
     var token: String? = null
 ) : AbstractModel<UserEntity>() {
 

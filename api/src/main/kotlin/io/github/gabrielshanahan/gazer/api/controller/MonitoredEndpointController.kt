@@ -1,6 +1,7 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
 import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointResourceAssembler
+import io.github.gabrielshanahan.gazer.api.controller.response.CollectionResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.ModelResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointResponseAssembler
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
@@ -39,28 +40,17 @@ internal class MonitoredEndpointController(
 ) {
 
     @GetMapping("")
-    fun findAll(
+    fun getAll(
         @RequestHeader(value = "GazerToken") token: String
-    ) = withAuthedUser(token) { user ->
+    ): CollectionResponse = withAuthedUser(token) { user ->
         endpointRepository
             .getAllByUser(user)
             .map(MonitoredEndpointEntity::asModel).toMutableList() into
             resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
-
-//        endpointRepository
-//            .getAllByUser(user)
-//            .map { it.asModel() into resourceAssembler::toModel }
-//    } into {
-//        CollectionModel.of(
-//            it,
-//            WebMvcLinkBuilder.linkTo(
-//                WebMvcLinkBuilder.methodOn(MonitoredEndpointController::class.java).findAll("")
-//            ).withSelfRel()
-//        )
     }
 
     @GetMapping("/{id}")
-    fun findById(
+    fun getById(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String
     ): ModelResponse = authAndFind(token, id) { endpoint ->
@@ -69,7 +59,7 @@ internal class MonitoredEndpointController(
 
     @Validated(Default::class, OnCreate::class)
     @PostMapping("")
-    fun create(
+    fun createEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
         @Valid @RequestBody endpoint: MonitoredEndpoint
     ): ModelResponse = withAuthedUser(token) { user ->
@@ -97,7 +87,7 @@ internal class MonitoredEndpointController(
             }
         }
 
-        create(token, endpoint)
+        createEndpoint(token, endpoint)
     }
 
     @DeleteMapping("/{id}")
