@@ -2,7 +2,9 @@ package io.github.gabrielshanahan.gazer.api.controller
 
 import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden
+import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultForbidden
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
 import io.github.gabrielshanahan.gazer.data.model.UserEntity
 import java.util.*
 import kotlin.reflect.KClass
@@ -11,7 +13,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 
-internal fun <R> MonitoredEndpointController.withAuthedUser(token: String, action: (UserEntity) -> R) =
+internal fun <R> AbstractController.withAuthedUser(token: String, action: (UserEntity) -> R) =
     (userRepository.getByToken(token) ?: throw InvalidGazerTokenException())
         .let(action)
 
@@ -27,6 +29,21 @@ internal fun <R> MonitoredEndpointController.authAndFind(
                 throw MonitoredEndpointForbidden(id)
             }
             action(fetchedEndpoint)
+        }.orElse(null)
+}
+
+internal fun <R> MonitoringResultController.authAndFind(
+    token: String,
+    id: String,
+    action: (MonitoringResultEntity) -> R
+): R? = withAuthedUser(token) { user ->
+    resultRepository
+        .findById(UUID.fromString(id))
+        .map { fetchedResult ->
+            if (fetchedResult.monitoredEndpoint.user.id != user.id) {
+                throw MonitoringResultForbidden(id)
+            }
+            action(fetchedResult)
         }.orElse(null)
 }
 

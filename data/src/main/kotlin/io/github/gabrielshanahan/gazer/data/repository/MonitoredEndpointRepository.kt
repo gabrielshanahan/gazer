@@ -10,5 +10,4 @@ import org.springframework.stereotype.Repository
 interface MonitoredEndpointRepository : JpaRepository<MonitoredEndpointEntity, UUID> {
     fun getAllByUser(user: UserEntity): List<MonitoredEndpointEntity>
     fun getByUserAndId(user: UserEntity, id: UUID): MonitoredEndpointEntity?
-    fun removeByUserAndId(user: UserEntity, id: UUID): MonitoredEndpointEntity?
 }

@@ -4,6 +4,7 @@
   <Whitelist>
     <ID>MagicNumber:MonitoredEndpoint.kt$MonitoredEndpoint$10</ID>
     <ID>SpreadOperator:ApiApplication.kt$(*args)</ID>
+    <ID>UnnecessaryAbstractClass:AbstractController.kt$AbstractController</ID>
     <ID>UnnecessaryAbstractClass:AbstractModel.kt$AbstractModel&lt;T&gt;</ID>
   </Whitelist>
 </SmellBaseline>

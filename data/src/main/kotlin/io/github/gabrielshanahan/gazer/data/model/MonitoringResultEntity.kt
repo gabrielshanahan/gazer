@@ -3,7 +3,6 @@ package io.github.gabrielshanahan.gazer.data.model
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.Lob
 import javax.persistence.ManyToOne
 import javax.persistence.Table
@@ -18,7 +17,7 @@ class MonitoringResultEntity(
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    var checked: Date,
+    var checked: Date? = null,
 
     @Column(name = "http_status")
     var httpStatus: Int,
@@ -26,6 +25,6 @@ class MonitoringResultEntity(
     @Lob
     var payload: String,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     var monitoredEndpoint: MonitoredEndpointEntity
 ) : AbstractEntity(id)

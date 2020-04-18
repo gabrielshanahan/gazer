@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 
 @ControllerAdvice
-internal class MonitoredEndpointExceptionAdvice {
+internal class GazerExceptionAdvice {
 
     @ResponseBody
-    @ExceptionHandler(MonitoredEndpointException::class)
-    fun handleException(ex: MonitoredEndpointException) = when (ex) {
+    @ExceptionHandler(GazerException::class)
+    fun handleException(ex: GazerException) = when (ex) {
         is InvalidGazerTokenException -> HttpStatus.UNAUTHORIZED
-        is MonitoredEndpointNotFoundException -> HttpStatus.NOT_FOUND
-        is MonitoredEndpointForbidden -> HttpStatus.FORBIDDEN
-        is InvalidMonitoredEndpoint -> HttpStatus.BAD_REQUEST
+        is EntityNotFoundException -> HttpStatus.NOT_FOUND
+        is EntityForbidden -> HttpStatus.FORBIDDEN
+        is InvalidEntity -> HttpStatus.BAD_REQUEST
     } into {
-        ResponseEntity(ex.monitoredEndpointMsg, it)
+        ResponseEntity(ex.gazerMsg, it)
     }
 }
