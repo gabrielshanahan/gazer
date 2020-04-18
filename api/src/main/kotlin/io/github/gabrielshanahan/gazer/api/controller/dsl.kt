@@ -5,9 +5,6 @@ import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.model.UserEntity
 import java.util.*
-import org.springframework.hateoas.Link
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 
 internal fun <R> MonitoredEndpointController.withAuthedUser(token: String, action: (UserEntity) -> R) =
     (userRepository.getByToken(token) ?: throw InvalidGazerTokenException())
@@ -29,9 +26,3 @@ internal fun <R> MonitoredEndpointController.authAndFind(
 }
 
 internal infix fun <R> R?.orWhenNoneFound(action: () -> R): R = this ?: action()
-
-internal inline fun <R : Any> selfLink(action: MonitoredEndpointController.() -> R): Link =
-    linkTo(methodOn(MonitoredEndpointController::class.java).action()).withSelfRel()
-
-internal inline fun <R : Any> link(action: MonitoredEndpointController.() -> Pair<String, R>): Link =
-    methodOn(MonitoredEndpointController::class.java).action().run { linkTo(second).withRel(first) }
