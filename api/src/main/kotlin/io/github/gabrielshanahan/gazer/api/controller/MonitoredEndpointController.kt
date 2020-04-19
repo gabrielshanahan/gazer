@@ -1,15 +1,20 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
 import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointResourceAssembler
+import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultResourceAssembler
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointCollectionResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointModelResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointResponseAssembler
+import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultCollectionResponse
+import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultResponseAssembler
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.api.model.asModel
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
+import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.func.into
 import java.util.*
@@ -36,6 +41,9 @@ internal class MonitoredEndpointController(
     val validator: Validator,
     val resourceAssembler: MonitoredEndpointResourceAssembler,
     val responseAssembler: MonitoredEndpointResponseAssembler,
+    val resultRepository: MonitoringResultRepository,
+    val resultResourceAssembler: MonitoringResultResourceAssembler,
+    val resultResponseAssembler: MonitoringResultResponseAssembler,
     userRepository: UserRepository
 ) : AbstractController(userRepository) {
 
@@ -55,6 +63,17 @@ internal class MonitoredEndpointController(
         @PathVariable id: String
     ): MonitoredEndpointModelResponse = authAndFind(token, id) { endpoint ->
         endpoint into resourceAssembler::toModel into responseAssembler::toOkResponse
+    } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
+
+    @GetMapping("/{id}/monitoringResults")
+    fun getRelatedResults(
+        @RequestHeader(value = "GazerToken") token: String,
+        @PathVariable id: String
+    ): MonitoringResultCollectionResponse = authAndFind(token, id) { endpoint ->
+        resultRepository
+            .getAllByMonitoredEndpoint(endpoint)
+            .map(MonitoringResultEntity::asModel).toMutableList() into
+            resultResourceAssembler::toCollectionModel into resultResponseAssembler::toOkResponse
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
 
     @Validated(Default::class, OnCreate::class)

@@ -106,4 +106,20 @@ class HTTPGetTest(
                 .jsonPath("\$.monitoredEndpoint.user.username")
                 .value(sharedData.applifting.user.username))
     }
+
+    @Test
+    fun `Related monitoring results work`() {
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(
+                "/monitoredEndpoints/${sharedData.applifting.endpoints.first().id}/monitoringResults"
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("GazerToken", sharedData.applifting.user.token)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().contentType(HAL_FORMS_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("\$._embedded.monitoringResultList[0].monitoredEndpoint.id")
+                .value(sharedData.applifting.endpoints.first().id.toString()))
+    }
 }

@@ -30,6 +30,9 @@ class MonitoredEndpointResourceAssembler : RepresentationModelAssembler<Monitore
                         deleteEndpoint("", endpoint.id.toString())
                     },
                     link {
+                        "monitoringResults" to getRelatedResults("", endpoint.id.toString())
+                    },
+                    link {
                         "monitoredEndpoints" to getAll("")
                     }
                 )
