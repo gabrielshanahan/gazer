@@ -1,5 +1,6 @@
 package io.github.gabrielshanahan.gazer.gazer
 
+import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,7 +23,7 @@ import javax.annotation.PreDestroy
 
 
 @Component
-class ScheduledTask : CoroutineScope by CoroutineScope(Dispatchers.IO) {
+class ScheduledTask(val endpointRepo: MonitoredEndpointRepository) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     private val log: Logger = LoggerFactory.getLogger(ScheduledTask::class.java)
 
     private val dateFormat = SimpleDateFormat("HH:mm:ss")
@@ -50,22 +51,27 @@ class ScheduledTask : CoroutineScope by CoroutineScope(Dispatchers.IO) {
     @Scheduled(fixedRate = 3000)
     fun reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(Date()))
-        log.info("Launching coroutine and setting x to 0")
-        var x = 0
-        launch {
-            try {
-                delay(2000)
-                x++
-                printStuff()
-                log.info("x is $x")
-            } finally {
-                withContext(NonCancellable) {
-                    log.info("Closing stuff")
-                    delay(5000)
-                    log.info("Closed")
-                }
-            }
+//        log.info("Launching coroutine and setting x to 0")
+//        var x = 0
+//        launch {
+//            try {
+//                delay(2000)
+//                x++
+//                printStuff()
+//                log.info("x is $x")
+//            } finally {
+//                withContext(NonCancellable) {
+//                    log.info("Closing stuff")
+//                    delay(5000)
+//                    log.info("Closed")
+//                }
+//            }
+//        }
+//        log.info("Exiting reportCurrentTime")
+
+        endpointRepo.findAll().forEach {
+            log.info("Found ${it.id}")
         }
-        log.info("Exiting reportCurrentTime")
+
     }
 }

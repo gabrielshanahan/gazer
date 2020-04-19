@@ -18,6 +18,7 @@ configurations {
 dependencies {
     implementation(project(":func"))
     implementation(project(":data"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -25,18 +26,12 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         exclude(module = "junit")
     }
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
-
-    runtimeOnly("mysql:mysql-connector-java")
-    runtimeOnly("com.h2database:h2")
-
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks {

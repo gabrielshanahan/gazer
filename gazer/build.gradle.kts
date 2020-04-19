@@ -15,16 +15,14 @@ configurations {
 }
 
 dependencies {
+
     implementation(project(":func"))
     implementation(project(":data"))
-
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -32,10 +30,6 @@ dependencies {
     }
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
-    runtimeOnly("mysql:mysql-connector-java")
-    runtimeOnly("com.h2database:h2")
-
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks {

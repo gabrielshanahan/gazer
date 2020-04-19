@@ -1,6 +1,7 @@
 import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 
 plugins {
+    id("org.springframework.boot")
     id("io.spring.dependency-management")
 
     kotlin("plugin.spring")
@@ -24,7 +25,8 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-web")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -32,7 +34,8 @@ dependencies {
     }
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
-    runtimeOnly("com.h2database:h2")
+    implementation("com.h2database:h2")
+    runtimeOnly("mysql:mysql-connector-java")
 }
 
 tasks {
