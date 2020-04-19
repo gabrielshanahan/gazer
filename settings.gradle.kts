@@ -12,4 +12,4 @@ pluginManagement {
     }
 }
 rootProject.name = "gazer"
-include("data", "api", "func")
+include("gazer", "data", "api", "func")
