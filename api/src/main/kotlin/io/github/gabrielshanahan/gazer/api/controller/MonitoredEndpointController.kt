@@ -21,7 +21,10 @@ import java.util.*
 import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 import javax.validation.Validator
+import javax.validation.constraints.Min
 import javax.validation.groups.Default
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -68,11 +72,19 @@ internal class MonitoredEndpointController(
     @GetMapping("/{id}/monitoringResults")
     fun getRelatedResults(
         @RequestHeader(value = "GazerToken") token: String,
-        @PathVariable id: String
+        @PathVariable id: String,
+        @RequestParam @Min(1) limit: Int? = null
     ): MonitoringResultCollectionResponse = authAndFind(token, id) { endpoint ->
-        resultRepository
-            .getAllByMonitoredEndpoint(endpoint)
-            .map(MonitoringResultEntity::asModel).toMutableList() into
+        val results = if (limit != null) {
+            resultRepository.getAllByMonitoredEndpoint(
+                endpoint,
+                PageRequest.of(0, limit, Sort.by("checked").descending())
+            )
+        } else {
+            resultRepository.getAllByMonitoredEndpointOrderByCheckedDesc(endpoint)
+        }
+
+        results.map(MonitoringResultEntity::asModel).toMutableList() into
             resultResourceAssembler::toCollectionModel into resultResponseAssembler::toOkResponse
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
 

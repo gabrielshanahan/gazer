@@ -4,6 +4,7 @@ import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
 import io.github.gabrielshanahan.gazer.data.model.UserEntity
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
+import java.util.*
 
 class DataSamples(userRepo: UserRepository) {
 
@@ -32,16 +33,19 @@ class DataSamples(userRepo: UserRepository) {
 
     val googleResults = listOf(
         MonitoringResultEntity(
+            checked = Date(System.currentTimeMillis() - 1000 * 60),
             httpStatus = 200,
             payload = "GooglePayload1",
             monitoredEndpoint = googleEndpoint
         ),
         MonitoringResultEntity(
+            checked = Date(System.currentTimeMillis() - 1000 * 40),
             httpStatus = 200,
             payload = "GooglePayload2",
             monitoredEndpoint = googleEndpoint
         ),
         MonitoringResultEntity(
+            checked = Date(System.currentTimeMillis() - 1000 * 50),
             httpStatus = 400,
             payload = "Bad request",
             monitoredEndpoint = googleEndpoint
@@ -50,11 +54,13 @@ class DataSamples(userRepo: UserRepository) {
 
     val yahooResults = listOf(
         MonitoringResultEntity(
+            checked = Date(System.currentTimeMillis() - 1000 * 27),
             httpStatus = 500,
             payload = "Internal error",
             monitoredEndpoint = yahooEndpoint
         ),
         MonitoringResultEntity(
+            checked = Date(System.currentTimeMillis() - 1000 * 25),
             httpStatus = 200,
             payload = "YahooPayload2",
             monitoredEndpoint = yahooEndpoint

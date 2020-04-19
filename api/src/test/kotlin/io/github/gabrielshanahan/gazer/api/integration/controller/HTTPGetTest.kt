@@ -122,4 +122,20 @@ class HTTPGetTest(
             .andExpect(MockMvcResultMatchers.jsonPath("\$._embedded.monitoringResultList[0].monitoredEndpoint.id")
                 .value(sharedData.applifting.endpoints.first().id.toString()))
     }
+
+    @Test
+    fun `Related monitoring results work with limit`() {
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(
+                "/monitoredEndpoints/${sharedData.applifting.endpoints.first().id}/monitoringResults?limit=1"
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("GazerToken", sharedData.applifting.user.token)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().contentType(HAL_FORMS_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("\$._embedded.monitoringResultList[1]")
+                .doesNotExist())
+    }
 }

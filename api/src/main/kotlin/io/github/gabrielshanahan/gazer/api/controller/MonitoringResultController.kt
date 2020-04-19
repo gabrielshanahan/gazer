@@ -30,7 +30,7 @@ internal class MonitoringResultController(
         @RequestHeader(value = "GazerToken") token: String
     ): MonitoringResultCollectionResponse = withAuthedUser(token) { user ->
         resultRepository
-            .getAllByMonitoredEndpointUser(user)
+            .getAllByMonitoredEndpointUserOrderByCheckedDesc(user)
             .map(MonitoringResultEntity::asModel).toMutableList() into
             resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
     }

@@ -8,16 +8,15 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 import javax.persistence.Temporal
 import javax.persistence.TemporalType
-import org.hibernate.annotations.CreationTimestamp
 
 @Entity
 @Table(name = "monitoring_result")
 class MonitoringResultEntity(
     id: UUID? = null,
 
-    @CreationTimestamp
+//    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    var checked: Date? = null,
+    var checked: Date,
 
     @Column(name = "http_status")
     var httpStatus: Int,
