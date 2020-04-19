@@ -4,7 +4,7 @@ import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultR
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultCollectionResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultModelResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultResponseAssembler
-import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
+import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.asModel
 import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
@@ -41,5 +41,5 @@ internal class MonitoringResultController(
         @PathVariable id: String
     ): MonitoringResultModelResponse = authAndFind(token, id) { result ->
         result into resourceAssembler::toModel into responseAssembler::toOkResponse
-    } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
+    } orWhenNoneFound { throw MonitoringResultNotFoundException(id) }
 }
