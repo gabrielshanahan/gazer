@@ -1,7 +1,5 @@
 package io.github.gabrielshanahan.gazer.gazer
 
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
