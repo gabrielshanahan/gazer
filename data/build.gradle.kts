@@ -42,6 +42,12 @@ tasks {
     jar {
         enabled = true
     }
+    bootJar {
+        layered()
+    }
+    bootRun {
+        jvmArgs = listOf("-Dspring.profiles.active=dev")
+    }
 }
 
 allOpen {
