@@ -1,26 +1,20 @@
 package io.github.gabrielshanahan.gazer.gazer
 
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
+import java.text.SimpleDateFormat
+import java.util.*
+import javax.annotation.PreDestroy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.text.SimpleDateFormat
-import java.util.*
-import javax.annotation.PreDestroy
-
 
 @Component
 class ScheduledTask(val endpointRepo: MonitoredEndpointRepository) : CoroutineScope by CoroutineScope(Dispatchers.IO) {
@@ -72,6 +66,5 @@ class ScheduledTask(val endpointRepo: MonitoredEndpointRepository) : CoroutineSc
         endpointRepo.findAll().forEach {
             log.info("Found ${it.id}")
         }
-
     }
 }

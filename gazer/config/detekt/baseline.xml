@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist>
+    <ID>MagicNumber:ScheduledTask.kt$ScheduledTask$1000</ID>
+    <ID>SpreadOperator:GazerApplication.kt$(*args)</ID>
+  </Whitelist>
+</SmellBaseline>
