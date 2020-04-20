@@ -9,5 +9,6 @@
     <ID>MagicNumber:DataSamples.kt$DataSamples$40</ID>
     <ID>MagicNumber:DataSamples.kt$DataSamples$50</ID>
     <ID>MagicNumber:DataSamples.kt$DataSamples$60</ID>
+    <ID>SpreadOperator:DataApplication.kt$(*args)</ID>
   </Whitelist>
 </SmellBaseline>
