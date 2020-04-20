@@ -1,6 +1,5 @@
 package io.github.gabrielshanahan.gazer.gazer
 
-import kotlinx.coroutines.runBlocking
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -10,7 +9,5 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class GazerApplication
 
 fun main(args: Array<String>) {
-    runBlocking {
-        runApplication<GazerApplication>(*args)
-    }
+    runApplication<GazerApplication>(*args)
 }
