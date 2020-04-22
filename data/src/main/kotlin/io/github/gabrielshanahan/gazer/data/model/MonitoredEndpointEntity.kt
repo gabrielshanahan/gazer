@@ -31,7 +31,6 @@ class MonitoredEndpointEntity(
     @OneToMany(
         mappedBy = "monitoredEndpoint",
         fetch = FetchType.LAZY,
-        cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
     val monitoringResults: List<MonitoringResultEntity> = emptyList(),

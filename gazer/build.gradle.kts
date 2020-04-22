@@ -14,13 +14,19 @@ configurations {
     }
 }
 
+val ktor_version = "1.3.2"
 dependencies {
 
     implementation(project(":func"))
     implementation(project(":data"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    implementation("io.github.gabrielshanahan", "moroccode", "1.0.0")
+
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
