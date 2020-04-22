@@ -21,14 +21,11 @@ dependencies {
     implementation(project(":data"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5")
-//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("io.github.gabrielshanahan", "moroccode", "1.0.0")
 
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
-
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -46,7 +43,7 @@ tasks {
         layered()
     }
     bootRun {
-        jvmArgs = listOf("-Dspring.profiles.active=dev")
+        jvmArgs = listOf("-Dspring.profiles.active=dev", "-Dkotlinx.coroutines.debug")
     }
 
 }

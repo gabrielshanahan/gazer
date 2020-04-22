@@ -9,5 +9,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @Configuration
 @EnableJpaRepositories(basePackageClasses = [DataConfiguration::class])
 @EntityScan(basePackageClasses = [DataConfiguration::class])
-@ComponentScan
 class GazerConfiguration
