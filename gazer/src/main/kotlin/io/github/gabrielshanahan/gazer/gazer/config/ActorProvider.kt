@@ -10,6 +10,7 @@ import javax.annotation.PreDestroy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import org.slf4j.Logger
@@ -29,7 +30,7 @@ class ActorProvider(
     @get:Bean
     val persistor: SendChannel<PersistMsg> = createActor()
 
-    private final fun createActor(): SendChannel<GazerMsg> = actor {
+    private final fun createActor(): SendChannel<GazerMsg> = actor(capacity = 1024) {
         for (msg in channel) {
             when (msg) {
                 is PersistMsg -> {
