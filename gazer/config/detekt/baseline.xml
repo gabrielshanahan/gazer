@@ -2,7 +2,12 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>MagicNumber:ScheduledTask.kt$ScheduledTask$1000</ID>
+    <ID>LongParameterList:MonitoredEndpoint.kt$MonitoredEndpoint$( var id: UUID, var name: String, var url: String, var created: Date?, var lastCheck: Date?, var monitoredInterval: Int, var user: User )</ID>
+    <ID>MagicNumber:GazerApplication.kt$GazerApplication$1000</ID>
+    <ID>MagicNumber:GazerServiceImpl.kt$GazerServiceImpl$1000L</ID>
+    <ID>MagicNumber:loggingShorthands.kt$25</ID>
+    <ID>MagicNumber:loggingShorthands.kt$9</ID>
     <ID>SpreadOperator:GazerApplication.kt$(*args)</ID>
+    <ID>UnnecessaryAbstractClass:AbstractModel.kt$AbstractModel&lt;T&gt;</ID>
   </Whitelist>
 </SmellBaseline>

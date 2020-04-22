@@ -6,6 +6,7 @@ import io.github.gabrielshanahan.gazer.gazer.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
+import java.util.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.util.*
 
 internal data class Changes(
     val create: List<MonitoredEndpoint>,
@@ -35,7 +35,7 @@ class GazerApplication(
     val endpointRepo: MonitoredEndpointRepository,
     private val gazerService: GazerService,
     private val persistor: SendChannel<PersistMsg>
-): CommandLineRunner {
+) : CommandLineRunner {
 
     private val log: Logger = LoggerFactory.getLogger(GazerApplication::class.java)
 
@@ -70,11 +70,10 @@ class GazerApplication(
         }
     }
 
-
     override fun run(vararg args: String) = runBlocking {
         val gazers: GazerMap = mutableMapOf()
 
-        while(true) {
+        while (true) {
             val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
             gazers collectChangesFrom fetchedEndpoints into update(gazers)
             delay(1000)
