@@ -14,7 +14,6 @@ import javax.persistence.TemporalType
 class MonitoringResultEntity(
     id: UUID? = null,
 
-//    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     var checked: Date,
 

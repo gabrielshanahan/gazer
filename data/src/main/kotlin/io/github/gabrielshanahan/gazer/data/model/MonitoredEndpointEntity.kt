@@ -26,7 +26,7 @@ class MonitoredEndpointEntity(
 
     @Column(name = "last_check")
     @Temporal(TemporalType.TIMESTAMP)
-    val lastCheck: Date? = null,
+    var lastCheck: Date? = null,
 
     @OneToMany(
         mappedBy = "monitoredEndpoint",

@@ -16,6 +16,9 @@ data class MonitoringResult(
     var httpStatus: Int? = null,
 
     @get:JsonProperty(access = READ_ONLY)
+    var payload: String? = null,
+
+    @get:JsonProperty(access = READ_ONLY)
     var monitoredEndpoint: MonitoredEndpoint? = null
 ) : AbstractModel<MonitoringResultEntity>() {
 
@@ -23,6 +26,7 @@ data class MonitoringResult(
         id = entity.id
         checked = entity.checked
         httpStatus = entity.httpStatus
+        payload = entity.payload
         monitoredEndpoint = entity.monitoredEndpoint.asModel()
     }
 
