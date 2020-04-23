@@ -7,9 +7,9 @@ import io.github.gabrielshanahan.gazer.gazer.model.asModel
 import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import java.util.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
@@ -80,8 +80,8 @@ class GazerApplication(
         }
     }
 
-    internal suspend fun gaze(gazers: GazerMap, shouldQuit: suspend () -> Boolean = { false }) = supervisorScope {
-        while (!shouldQuit()) {
+    internal suspend fun gaze(gazers: GazerMap, coroutineScope: CoroutineScope) = with(coroutineScope) {
+        while (true) {
             val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
             gazers collectChangesFrom fetchedEndpoints suspInto update(gazers)
             delay(1000)
@@ -89,7 +89,9 @@ class GazerApplication(
     }
 
     override fun run(vararg args: String) = runBlocking(Dispatchers.Default) {
-        gaze(mutableMapOf())
+        supervisorScope {
+            gaze(mutableMapOf(), this)
+        }
     }
 }
 

@@ -3,14 +3,13 @@ package io.github.gabrielshanahan.gazer.gazer.config
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
 import io.github.gabrielshanahan.gazer.func.into
+import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.service.GazerMsg
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
-import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import javax.annotation.PreDestroy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import org.hibernate.TransientPropertyValueException
@@ -40,9 +39,9 @@ class ActorProvider(
                     try {
                         msg.result.asEntity() into resultRepo::saveAndFlush
                         msg.result.monitoredEndpoint.asEntity() into endpointRepo::saveAndFlush
-                    } catch(e: InvalidDataAccessApiUsageException) {
+                    } catch (e: InvalidDataAccessApiUsageException) {
                         val cause = e.cause
-                        if(cause is IllegalStateException && cause.cause is TransientPropertyValueException) {
+                        if (cause is IllegalStateException && cause.cause is TransientPropertyValueException) {
                             log.info("Persist failed for ${msg.result.toShortStr()} because " +
                                 "${msg.result.monitoredEndpoint.toShortStr()} was removed")
                         } else {

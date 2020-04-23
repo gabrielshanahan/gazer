@@ -6,4 +6,4 @@ import org.springframework.context.annotation.Import
 
 @ComponentScan("io.github.gabrielshanahan.gazer.gazer.service")
 @Import(DataConfiguration::class)
-class TestConfiguration: GazerConfiguration()
+class TestConfiguration : GazerConfiguration()
