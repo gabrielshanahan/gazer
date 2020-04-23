@@ -6,19 +6,19 @@ import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
 import java.util.*
 
 data class MonitoringResult(
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var id: UUID? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var checked: Date? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var httpStatus: Int? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var payload: String? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var monitoredEndpoint: MonitoredEndpoint? = null
 ) : AbstractModel<MonitoringResultEntity>() {
 

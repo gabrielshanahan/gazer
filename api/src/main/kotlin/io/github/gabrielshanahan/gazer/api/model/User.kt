@@ -8,7 +8,7 @@ data class User(
     var id: UUID? = null,
     var username: String? = null,
     var email: String? = null,
-    @JsonIgnore
+    @field:JsonIgnore
     var token: String? = null
 ) : AbstractModel<UserEntity>() {
 

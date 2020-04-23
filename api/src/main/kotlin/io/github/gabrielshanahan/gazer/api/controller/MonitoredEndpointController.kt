@@ -106,7 +106,7 @@ internal class MonitoredEndpointController(
     fun replaceEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
         @PathVariable id: String,
-        @RequestBody endpoint: MonitoredEndpoint
+        @Valid @RequestBody endpoint: MonitoredEndpoint
     ): MonitoredEndpointModelResponse = authAndFind(token, id) { fetchedEndpoint ->
         endpoint transferTo fetchedEndpoint into
             endpointRepository::save into resourceAssembler::toModel into responseAssembler::toUpdatedResponse

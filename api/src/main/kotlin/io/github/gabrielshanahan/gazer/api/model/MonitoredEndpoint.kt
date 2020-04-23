@@ -7,35 +7,35 @@ import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import java.util.*
 import javax.validation.constraints.Min
-import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import org.hibernate.validator.constraints.URL
 
 data class MonitoredEndpoint(
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var id: UUID? = null,
 
-    @get:NullOrNotBlank
-    @get:NotBlank
-    @get:NotNull(groups = [OnCreate::class])
+    @field:NullOrNotBlank
+    @field:NotNull(groups = [OnCreate::class])
     var name: String? = null,
 
-    @get:URL
-    @get:NotNull(groups = [OnCreate::class])
+    // Kudos https://stackoverflow.com/a/3809435 + added support for modern gTLD
+    @field:URL(regexp = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}" +
+        "\\.[a-z]{2,256}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)")
+    @field:NotNull(groups = [OnCreate::class])
     var url: String? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var created: Date? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var lastCheck: Date? = null,
 
     // Is there a better way?
-    @get:Min(10)
-    @get:NotNull(groups = [OnCreate::class])
+    @field:Min(10)
+    @field:NotNull(groups = [OnCreate::class])
     var monitoredInterval: Int? = null,
 
-    @get:JsonProperty(access = READ_ONLY)
+    @field:JsonProperty(access = READ_ONLY)
     var user: User? = null
 ) : AbstractModel<MonitoredEndpointEntity>() {
 
