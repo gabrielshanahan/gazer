@@ -19,3 +19,11 @@ data class MonitoringResult(
         monitoredEndpoint = monitoredEndpoint.asEntity()
     )
 }
+
+fun MonitoringResultEntity.asModel() = MonitoringResult(
+    id = id,
+    checked = checked,
+    httpStatus = httpStatus,
+    payload = payload,
+    monitoredEndpoint = monitoredEndpoint.asModel()
+)

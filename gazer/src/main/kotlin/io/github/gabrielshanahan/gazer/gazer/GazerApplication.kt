@@ -23,9 +23,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 internal data class Changes(
-    val create: List<MonitoredEndpoint>,
-    val update: List<MonitoredEndpoint>,
-    val delete: Set<UUID>
+    val create: List<MonitoredEndpoint> = emptyList(),
+    val update: List<MonitoredEndpoint> = emptyList(),
+    val delete: Set<UUID> = emptySet()
 )
 
 internal data class Gazer(
@@ -44,7 +44,7 @@ class GazerApplication(
 
     private val log: Logger = LoggerFactory.getLogger(GazerApplication::class.java)
 
-    private infix fun GazerMap.collectChangesFrom(endpoints: List<MonitoredEndpoint>) = Changes(
+    internal infix fun GazerMap.collectChangesFrom(endpoints: List<MonitoredEndpoint>) = Changes(
         create = endpoints.filter {
             it.id !in keys
         },
@@ -56,40 +56,40 @@ class GazerApplication(
         }
     )
 
-    private fun CoroutineScope.launchGazer(endpoint: MonitoredEndpoint): Job = launch {
+    internal fun CoroutineScope.launchGazer(endpoint: MonitoredEndpoint): Job = launch {
         log.info("Gazer created for ${endpoint.toShortStr()}")
         gazerService.gaze(endpoint, persistor)
     }
 
-    private fun CoroutineScope.update(gazers: GazerMap): suspend Changes.() -> Unit = {
+    internal fun CoroutineScope.update(gazers: GazerMap): suspend Changes.() -> Unit = {
         create.forEach {
             log.info("Creating gazer for ${it.toShortStr()}")
             gazers[it.id] = Gazer(it, launchGazer(it))
         }
 
         update.forEach {
-            log.info("Updating gazer for ${it.toShortStr()}")
+            log.info("Updating gazer for ${gazers[it.id]?.endpoint?.toShortStr()}")
             gazers[it.id]?.job?.cancel()
             gazers[it.id] = Gazer(it, launchGazer(it))
         }
 
         delete.forEach {
-            log.info("Removing gazer for $it")
+            log.info("Removing gazer for ${gazers[it]?.endpoint?.toShortStr()}")
             gazers[it]?.job?.cancel()
             gazers.remove(it)
         }
     }
 
-    override fun run(vararg args: String) = runBlocking(Dispatchers.Default) {
-        val gazers: GazerMap = mutableMapOf()
-
-        supervisorScope {
-            while (true) {
-                val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
-                gazers collectChangesFrom fetchedEndpoints suspInto update(gazers)
-                delay(1000)
-            }
+    internal suspend fun gaze(gazers: GazerMap, shouldQuit: suspend () -> Boolean = { false }) = supervisorScope {
+        while (!shouldQuit()) {
+            val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
+            gazers collectChangesFrom fetchedEndpoints suspInto update(gazers)
+            delay(1000)
         }
+    }
+
+    override fun run(vararg args: String) = runBlocking(Dispatchers.Default) {
+        gaze(mutableMapOf())
     }
 }
 

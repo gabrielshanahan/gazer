@@ -63,6 +63,6 @@ class GazerServiceImpl(val client: HttpClient) : GazerService {
             delay(endpoint.monitoredInterval * 1000L)
         }
     } finally {
-        log.info("Gazing finished for ${endpoint.toShortStr()}")
+        log.info("Gazer cancelled for ${endpoint.toShortStr()}")
     }
 }
