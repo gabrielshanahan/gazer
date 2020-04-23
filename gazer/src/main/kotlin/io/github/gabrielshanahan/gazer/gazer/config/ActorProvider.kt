@@ -27,10 +27,7 @@ class ActorProvider(
 
     private val log: Logger = LoggerFactory.getLogger(ActorProvider::class.java)
 
-    @get:Bean
-    val persistor: SendChannel<PersistMsg> = createActor()
-
-    private final fun createActor(): SendChannel<GazerMsg> = actor(capacity = 1024) {
+    val persistor: SendChannel<GazerMsg> = actor(capacity = 1024) {
         for (msg in channel) {
             when (msg) {
                 is PersistMsg -> {
@@ -47,6 +44,9 @@ class ActorProvider(
             }
         }
     }
+
+    @Bean
+    fun getActor(): SendChannel<PersistMsg> = persistor
 
     @PreDestroy
     fun closePersistorChannel() {

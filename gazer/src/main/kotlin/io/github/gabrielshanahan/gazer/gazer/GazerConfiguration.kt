@@ -18,10 +18,12 @@ class GazerConfiguration {
 
     private val log: Logger = LoggerFactory.getLogger(GazerConfiguration::class.java)
 
-    @get:Bean
     val ktorClient = HttpClient() {
         expectSuccess = false
     }
+
+    @Bean
+    fun getHttpClient() = ktorClient
 
     @PreDestroy
     fun releaseKtorClient() {
