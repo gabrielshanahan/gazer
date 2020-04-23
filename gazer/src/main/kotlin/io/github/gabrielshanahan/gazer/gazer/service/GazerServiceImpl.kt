@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class GazerServiceImpl(val client: HttpClient) : GazerService {
-    private val log: Logger = LoggerFactory.getLogger(GazerServiceImpl::class.java)
 
+    private val log: Logger = LoggerFactory.getLogger(GazerServiceImpl::class.java)
 
     override suspend fun gaze(endpoint: MonitoredEndpoint, persistor: SendChannel<PersistMsg>) = try {
         while (true) {
