@@ -1,16 +1,21 @@
 package io.github.gabrielshanahan.gazer.gazer
 
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
-import io.github.gabrielshanahan.gazer.func.into
+import io.github.gabrielshanahan.gazer.func.suspInto
 import io.github.gabrielshanahan.gazer.gazer.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
+import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import java.util.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.supervisorScope
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
@@ -51,16 +56,21 @@ class GazerApplication(
         }
     )
 
-    private fun update(gazers: GazerMap): Changes.() -> Unit = {
+    private fun CoroutineScope.launchGazer(endpoint: MonitoredEndpoint): Job = launch {
+        log.info("Gazer created for ${endpoint.toShortStr()}")
+        gazerService.gaze(endpoint, persistor)
+    }
+
+    private fun CoroutineScope.update(gazers: GazerMap): suspend Changes.() -> Unit = {
         create.forEach {
-            log.info("Creating gazer for ${it.id}")
-            gazers[it.id] = Gazer(it, gazerService.launchGazer(it, persistor))
+            log.info("Creating gazer for ${it.toShortStr()}")
+            gazers[it.id] = Gazer(it, launchGazer(it))
         }
 
         update.forEach {
-            log.info("Updating gazer for ${it.id}")
+            log.info("Updating gazer for ${it.toShortStr()}")
             gazers[it.id]?.job?.cancel()
-            gazers[it.id] = Gazer(it, gazerService.launchGazer(it, persistor))
+            gazers[it.id] = Gazer(it, launchGazer(it))
         }
 
         delete.forEach {
@@ -70,13 +80,15 @@ class GazerApplication(
         }
     }
 
-    override fun run(vararg args: String) = runBlocking {
+    override fun run(vararg args: String) = runBlocking(Dispatchers.Default) {
         val gazers: GazerMap = mutableMapOf()
 
-        while (true) {
-            val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
-            gazers collectChangesFrom fetchedEndpoints into update(gazers)
-            delay(1000)
+        supervisorScope {
+            while (true) {
+                val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
+                gazers collectChangesFrom fetchedEndpoints suspInto update(gazers)
+                delay(1000)
+            }
         }
     }
 }
