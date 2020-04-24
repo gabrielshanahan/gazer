@@ -18,11 +18,23 @@ services:
       timeout: 20s
       retries: 10
 
-  api:
+  data:
     build:
       context: ./
       args:
         WFI_ARGS: "db:3306 -t 20"
+        MODULE: "data"
+    environment:
+      MYSQL_GAZER_DATABASE: "${MYSQL_GAZER_DATABASE:-gazer}"
+      MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
+    depends_on:
+      - db
+
+  api:
+    build:
+      context: ./
+      args:
+        WFI_ARGS: "data:8081 -t 25"
         MODULE: "api"
     expose:
       - 8080
@@ -32,4 +44,17 @@ services:
       MYSQL_GAZER_DATABASE: "${MYSQL_GAZER_DATABASE:-gazer}"
       MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
     depends_on:
-      - db
+      - data
+
+  gazer:
+    build:
+      context: ./
+      args:
+        WFI_ARGS: "data:8081 -t 25"
+        MODULE: "gazer"
+    environment:
+      MYSQL_GAZER_DATABASE: "${MYSQL_GAZER_DATABASE:-gazer}"
+      MYSQL_GAZER_PASSWORD: "${MYSQL_GAZER_PASSWORD}"
+    depends_on:
+      - data
+

@@ -9,13 +9,13 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.readText
 import io.ktor.util.date.toJvmDate
-import java.nio.channels.UnresolvedAddressException
-import java.util.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.nio.channels.UnresolvedAddressException
+import java.util.*
 
 @Service
 class GazerServiceImpl(val client: HttpClient) : GazerService {

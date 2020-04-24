@@ -1,7 +1,8 @@
 FROM adoptopenjdk:11-jre-hotspot as builder
 WORKDIR application
 ARG MODULE
-COPY ./$MODULE/build/libs/*.jar application.jar
+COPY ./$MODULE/build/libs/*-boot.jar application.jar
+RUN ["mkdir", "dependencies", "spring-boot-loader", "snapshot-dependencies", "application"]
 RUN java -Djarmode=layertools -jar application.jar extract
 
 FROM adoptopenjdk:11-jre-hotspot

@@ -46,6 +46,8 @@ tasks {
     }
     bootJar {
         layered()
+        archiveClassifier.convention("boot")
+        archiveClassifier.set("boot")
     }
     bootRun {
         jvmArgs = listOf("-Dspring.profiles.active=dev", "-Dkotlinx.coroutines.debug")

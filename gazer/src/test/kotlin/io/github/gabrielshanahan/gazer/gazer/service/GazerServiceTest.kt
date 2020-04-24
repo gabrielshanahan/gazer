@@ -5,7 +5,6 @@ import io.github.gabrielshanahan.gazer.data.DataSamples
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.gazer.TestConfiguration
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
-import io.ktor.client.request.get
 import io.mockk.coEvery
 import io.mockk.coVerify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
