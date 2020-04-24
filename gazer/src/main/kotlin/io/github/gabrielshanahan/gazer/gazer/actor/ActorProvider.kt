@@ -1,8 +1,9 @@
-package io.github.gabrielshanahan.gazer.gazer.config
+package io.github.gabrielshanahan.gazer.gazer.actor
 
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
 import io.github.gabrielshanahan.gazer.func.into
+import io.github.gabrielshanahan.gazer.gazer.cancelAndBlock
 import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.service.GazerMsg
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.yield
 import org.hibernate.TransientPropertyValueException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -51,6 +53,8 @@ class ActorProvider(
 
                     log.info("Persisting ${msg.result.toShortStr()} for " +
                         "${msg.result.monitoredEndpoint.toShortStr()} finished")
+
+                    yield()
                 }
             }
         }
@@ -63,5 +67,8 @@ class ActorProvider(
     fun closePersistorChannel() {
         log.info("Closing persistor channel")
         persistor.close()
+
+        log.info("Cancelling actor scope")
+        cancelAndBlock()
     }
 }

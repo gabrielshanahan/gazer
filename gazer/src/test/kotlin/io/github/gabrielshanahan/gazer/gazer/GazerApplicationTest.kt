@@ -4,7 +4,7 @@ import io.github.gabrielshanahan.gazer.data.DataSamples
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
-import io.github.gabrielshanahan.gazer.func.suspInto
+import io.github.gabrielshanahan.gazer.func.into
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
@@ -41,13 +41,13 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
         val changes = Changes(create = listOf(createdEndpoint))
         val gazers: GazerMap = mutableMapOf()
 
-        spyk(GazerApplication(mockk(), mockk(), mockk())).apply {
+        spyk(GazerApplication(mockk(), mockk(), mockk(), this)).apply {
             coroutineScope {
                 coEvery {
                     launchGazer(createdEndpoint)
                 } returns(Job())
 
-                changes suspInto update(gazers)
+                changes into update(gazers)
 
                 coVerify {
                     launchGazer(createdEndpoint)
@@ -68,13 +68,13 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
             updatedEndpoint.id to Gazer(updatedEndpoint, mockJob)
         )
 
-        spyk(GazerApplication(mockk(), mockk(), mockk())).apply {
+        spyk(GazerApplication(mockk(), mockk(), mockk(), this)).apply {
             coroutineScope {
                 coEvery {
                     launchGazer(updatedEndpoint)
                 } returns(Job())
 
-                changes suspInto update(gazers)
+                changes into update(gazers)
 
                 coVerify {
                     mockJob.cancel()
@@ -94,10 +94,10 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
             removedEndpoint.id to Gazer(removedEndpoint, mockJob)
         )
 
-        spyk(GazerApplication(mockk(), mockk(), mockk())).apply {
+        spyk(GazerApplication(mockk(), mockk(), mockk(), this)).apply {
             coroutineScope {
 
-                changes suspInto update(gazers)
+                changes into update(gazers)
 
                 coVerify {
                     mockJob.cancel()
@@ -109,9 +109,9 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
     }
 
     @Test
-    fun `Updated are constructed correctly`() = runBlockingTest {
+    fun `Gazer app works end-to-end`() = runBlockingTest {
         val endpointRepo: MonitoredEndpointRepository = mockk()
-        val gazerService: GazerService = mockk(relaxUnitFun = true)
+        val gazerService: GazerService = mockk()
         val persistor: SendChannel<PersistMsg> = mockk()
 
         val modifiedGoogleEndpoint = MonitoredEndpointEntity(
@@ -132,23 +132,28 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
             modifiedGoogleEndpoint
         ) andThen listOf()
 
+        coEvery {
+            gazerService.gaze(any(), any())
+        } coAnswers {
+            // This is necessary because for a TestCoroutineDispatcher, yield() doesn't actually yield
+            delay(1)
+        }
+
         val gazers: GazerMap = mutableMapOf()
 
-        spyk(GazerApplication(endpointRepo, gazerService, persistor)).apply gazerApp@{
-            coroutineScope coroutineScope@{
-                val job = launch {
-                    gaze(gazers, this@coroutineScope)
-                }
-                delay(3000)
-
-                coVerify {
-                    gazerService.gaze(sharedData.googleEndpoint.asModel(), persistor)
-                    gazerService.gaze(modifiedGoogleEndpoint.asModel(), persistor)
-                }
-
-                Assertions.assertEquals(0, gazers.size)
-                job.cancel()
+        spyk(GazerApplication(endpointRepo, gazerService, persistor, this)).apply gazerApp@{
+            val job = launch {
+                gaze(gazers)
             }
+            delay(3000)
+
+            coVerify {
+                gazerService.gaze(sharedData.googleEndpoint.asModel(), persistor)
+                gazerService.gaze(modifiedGoogleEndpoint.asModel(), persistor)
+            }
+
+            Assertions.assertEquals(0, gazers.size)
+            job.cancel()
         }
     }
 }

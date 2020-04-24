@@ -22,41 +22,37 @@ class GazerServiceImpl(val client: HttpClient) : GazerService {
 
     private val log: Logger = LoggerFactory.getLogger(GazerServiceImpl::class.java)
 
-    override suspend fun gaze(endpoint: MonitoredEndpoint, persistor: SendChannel<PersistMsg>) = try {
-        while (true) {
-            log.info("Gazing at ${endpoint.toShortStr()}")
-            try {
-                val response: HttpResponse = client.get(endpoint.url)
+    override suspend fun gaze(endpoint: MonitoredEndpoint, persistor: SendChannel<PersistMsg>) {
+        log.info("Gazing at ${endpoint.toShortStr()}")
+        try {
+            val response: HttpResponse = client.get(endpoint.url)
 
-                val result = MonitoringResult(
-                    checked = response.responseTime.toJvmDate(),
-                    httpStatus = response.status.value,
-                    payload = response.readText(),
+            val result = MonitoringResult(
+                checked = response.responseTime.toJvmDate(),
+                httpStatus = response.status.value,
+                payload = response.readText(),
+                monitoredEndpoint = endpoint
+            )
+
+            log.info("Saw ${result.toShortStr()} at ${endpoint.toShortStr()}, sending result...")
+
+            PersistMsg(result) suspInto persistor::send
+        } catch (e: UnresolvedAddressException) {
+            log.info("Unresolved address for ${endpoint.toShortStr()}, sending result...")
+
+            PersistMsg(
+                MonitoringResult(
+                    checked = Date(),
+                    httpStatus = 404,
+                    payload = "",
                     monitoredEndpoint = endpoint
                 )
-
-                log.info("Saw ${result.toShortStr()} at ${endpoint.toShortStr()}, sending result...")
-
-                PersistMsg(result) suspInto persistor::send
-            } catch (e: UnresolvedAddressException) {
-                log.info("Unresolved address for ${endpoint.toShortStr()}, sending result...")
-
-                PersistMsg(
-                    MonitoringResult(
-                        checked = Date(),
-                        httpStatus = 404,
-                        payload = "",
-                        monitoredEndpoint = endpoint
-                    )
-                ) suspInto persistor::send
-            }
-
-            log.info("Sending finished for ${endpoint.toShortStr()}, " +
-                "shutting eyes for ${endpoint.monitoredInterval}")
-
-            delay(endpoint.monitoredInterval * 1000L)
+            ) suspInto persistor::send
         }
-    } finally {
-        log.info("Gazer cancelled for ${endpoint.toShortStr()}")
+
+        log.info("Sending finished for ${endpoint.toShortStr()}, " +
+            "shutting eyes for ${endpoint.monitoredInterval}")
+
+        delay(endpoint.monitoredInterval * 1000L)
     }
 }

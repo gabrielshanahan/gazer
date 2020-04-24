@@ -10,8 +10,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,22 +29,21 @@ class GazerServiceTest(
 
     private val sharedData = DataSamples(userRepo)
 
+    /*
+     * MockK has trouble mocking HttpClient.get, because it can't deal with generic return types,
+     * so we actually have to make the HTTP call
+     */
     @Test
-    fun `Gazing works as expected`() = runBlockingTest {
+    fun `Gazing works as expected`() = runBlocking {
 
         val endpoint = sharedData.googleEndpoint.asModel()
+        endpoint.monitoredInterval = 0
 
         coEvery {
             persistor.send(any())
         } returns(Unit)
 
-        // Unfortunately can't mock HttpClient, because MockK can't deal with generic return types
-        val job = launch {
-            gazerService.gaze(endpoint, persistor)
-        }
-
-        coVerify(timeout = 1000) { persistor.send(any()) }
-
-        job.cancel()
+        gazerService.gaze(endpoint, persistor)
+        coVerify { persistor.send(any()) }
     }
 }

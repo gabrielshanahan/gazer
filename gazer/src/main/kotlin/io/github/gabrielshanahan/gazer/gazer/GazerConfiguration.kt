@@ -3,6 +3,9 @@ package io.github.gabrielshanahan.gazer.gazer
 import io.github.gabrielshanahan.gazer.data.DataConfiguration
 import io.ktor.client.HttpClient
 import javax.annotation.PreDestroy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -21,8 +24,19 @@ class GazerConfiguration {
         expectSuccess = false
     }
 
+    val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
     @Bean
-    fun getHttpClient() = ktorClient
+    fun gazerScope() = scope
+
+    @PreDestroy
+    fun killGazers() {
+        log.info("Killing all gazers")
+        scope.cancelAndBlock()
+    }
+
+    @Bean
+    fun httpClient() = ktorClient
 
     @PreDestroy
     fun releaseKtorClient() {

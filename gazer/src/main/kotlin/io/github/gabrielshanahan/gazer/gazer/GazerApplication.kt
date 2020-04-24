@@ -1,7 +1,7 @@
 package io.github.gabrielshanahan.gazer.gazer
 
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
-import io.github.gabrielshanahan.gazer.func.suspInto
+import io.github.gabrielshanahan.gazer.func.into
 import io.github.gabrielshanahan.gazer.gazer.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
 import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
@@ -9,13 +9,13 @@ import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
 import java.util.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.yield
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
@@ -34,14 +34,13 @@ internal data class Gazer(
 )
 
 internal typealias GazerMap = MutableMap<UUID, Gazer>
-
 @SpringBootApplication
 class GazerApplication(
     val endpointRepo: MonitoredEndpointRepository,
     private val gazerService: GazerService,
-    private val persistor: SendChannel<PersistMsg>
-) : CommandLineRunner {
-
+    private val persistor: SendChannel<PersistMsg>,
+    private val gazerScope: CoroutineScope
+) : CommandLineRunner, CoroutineScope by gazerScope {
     private val log: Logger = LoggerFactory.getLogger(GazerApplication::class.java)
 
     internal infix fun GazerMap.collectChangesFrom(endpoints: List<MonitoredEndpoint>) = Changes(
@@ -56,12 +55,19 @@ class GazerApplication(
         }
     )
 
-    internal fun CoroutineScope.launchGazer(endpoint: MonitoredEndpoint): Job = launch {
+    internal fun launchGazer(endpoint: MonitoredEndpoint): Job = launch {
         log.info("Gazer created for ${endpoint.toShortStr()}")
-        gazerService.gaze(endpoint, persistor)
+        try {
+            while (isActive) {
+                gazerService.gaze(endpoint, persistor)
+                yield()
+            }
+        } finally {
+            log.info("Gazer cancelled for ${endpoint.toShortStr()}")
+        }
     }
 
-    internal fun CoroutineScope.update(gazers: GazerMap): suspend Changes.() -> Unit = {
+    internal fun update(gazers: GazerMap): Changes.() -> Unit = {
         create.forEach {
             log.info("Creating gazer for ${it.toShortStr()}")
             gazers[it.id] = Gazer(it, launchGazer(it))
@@ -80,17 +86,17 @@ class GazerApplication(
         }
     }
 
-    internal suspend fun gaze(gazers: GazerMap, coroutineScope: CoroutineScope) = with(coroutineScope) {
-        while (true) {
+    internal suspend fun gaze(gazers: GazerMap) {
+        while (isActive) {
             val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
-            gazers collectChangesFrom fetchedEndpoints suspInto update(gazers)
+            gazers collectChangesFrom fetchedEndpoints into update(gazers)
             delay(1000)
         }
     }
 
-    override fun run(vararg args: String) = runBlocking(Dispatchers.Default) {
-        supervisorScope {
-            gaze(mutableMapOf(), this)
+    override fun run(vararg args: String) {
+        runBlocking {
+            gaze(mutableMapOf())
         }
     }
 }

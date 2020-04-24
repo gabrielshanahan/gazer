@@ -1,4 +1,4 @@
-package io.github.gabrielshanahan.gazer.gazer.config
+package io.github.gabrielshanahan.gazer.gazer.actor
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.gabrielshanahan.gazer.data.DataSamples
@@ -52,9 +52,6 @@ class ActorProviderTest(@Autowired private val userRepo: UserRepository) {
 
         verify {
             resultRepo.saveAndFlush(resultEntity)
-        }
-
-        verify {
             endpointRepo.saveAndFlush(resultEntity.monitoredEndpoint)
         }
     }
