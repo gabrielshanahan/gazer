@@ -32,3 +32,9 @@ profile is selected in Dockerfile. Fails fast if no profile is selected.
 - [Problems](https://docs.spring.io/spring-hateoas/docs/1.1.0.M3/reference/html/#mediatypes.http-problem) are not 
 implemented, errors are returned with content-type JSON, not HAL_FORMS_JSON
 
+## Known issues
+### Gazer
+- client.get can't be mocked
+- actor (ro more likely channels) cause tests to go into infinite loop
+- gazer tests can only be run one class at a time
+
