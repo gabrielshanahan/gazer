@@ -5,6 +5,7 @@ import io.github.gabrielshanahan.gazer.func.into
 import io.github.gabrielshanahan.gazer.gazer.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
 import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
+import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
 import java.util.*
@@ -34,12 +35,14 @@ internal data class Gazer(
 )
 
 internal typealias GazerMap = MutableMap<UUID, Gazer>
+
 @SpringBootApplication
 class GazerApplication(
-    val endpointRepo: MonitoredEndpointRepository,
+    private val endpointRepo: MonitoredEndpointRepository,
     private val gazerService: GazerService,
     private val persistor: SendChannel<PersistMsg>,
-    private val gazerScope: CoroutineScope
+    private val gazerScope: CoroutineScope,
+    private val properties: GazerProperties
 ) : CommandLineRunner, CoroutineScope by gazerScope {
     private val log: Logger = LoggerFactory.getLogger(GazerApplication::class.java)
 
@@ -90,7 +93,7 @@ class GazerApplication(
         while (isActive) {
             val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
             gazers collectChangesFrom fetchedEndpoints into update(gazers)
-            delay(1000)
+            delay(properties.syncRate)
         }
     }
 

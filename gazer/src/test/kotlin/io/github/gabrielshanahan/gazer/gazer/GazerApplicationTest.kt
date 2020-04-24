@@ -6,6 +6,7 @@ import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointReposito
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.func.into
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
+import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
 import io.mockk.coEvery
@@ -35,13 +36,17 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
 
     private val sharedData = DataSamples(userRepo)
 
+    private val properties = GazerProperties()
+
     @Test
     fun `Creating gazers for added endpoints works`() = runBlockingTest {
         val createdEndpoint = sharedData.googleEndpoint.asModel()
         val changes = Changes(create = listOf(createdEndpoint))
         val gazers: GazerMap = mutableMapOf()
 
-        spyk(GazerApplication(mockk(), mockk(), mockk(), this)).apply {
+        val gazerApp = GazerApplication(mockk(), mockk(), mockk(), this, properties)
+
+        with(spyk(gazerApp)) {
             coroutineScope {
                 coEvery {
                     launchGazer(createdEndpoint)
@@ -68,7 +73,9 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
             updatedEndpoint.id to Gazer(updatedEndpoint, mockJob)
         )
 
-        spyk(GazerApplication(mockk(), mockk(), mockk(), this)).apply {
+        val gazerApp = GazerApplication(mockk(), mockk(), mockk(), this, properties)
+
+        with(spyk(gazerApp)) {
             coroutineScope {
                 coEvery {
                     launchGazer(updatedEndpoint)
@@ -94,7 +101,9 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
             removedEndpoint.id to Gazer(removedEndpoint, mockJob)
         )
 
-        spyk(GazerApplication(mockk(), mockk(), mockk(), this)).apply {
+        val gazerApp = GazerApplication(mockk(), mockk(), mockk(), this, properties)
+
+        with(spyk(gazerApp)) {
             coroutineScope {
 
                 changes into update(gazers)
@@ -140,12 +149,13 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
         }
 
         val gazers: GazerMap = mutableMapOf()
+        val gazerApp = GazerApplication(endpointRepo, gazerService, persistor, this, properties)
 
-        spyk(GazerApplication(endpointRepo, gazerService, persistor, this)).apply gazerApp@{
+        with(spyk(gazerApp)) gazerApp@{
             val job = launch {
                 gaze(gazers)
             }
-            delay(3000)
+            delay(3 * properties.syncRate)
 
             coVerify {
                 gazerService.gaze(sharedData.googleEndpoint.asModel(), persistor)
