@@ -11,6 +11,3 @@ open class EntityNotFoundException(entity: String, id: String) :
 
 open class EntityForbidden(entity: String, id: String) :
     GazerException("You do not have permission to access $entity $id")
-
-open class InvalidEntity(entity: String) :
-    GazerException("Payload does not represent a valid $entity")

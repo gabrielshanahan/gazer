@@ -5,6 +5,3 @@ class MonitoringResultNotFoundException(id: String) :
 
 class MonitoringResultForbidden(id: String) :
     EntityForbidden("monitoring result", id)
-
-class InvalidMonitoringResult :
-    InvalidEntity("monitoring result")

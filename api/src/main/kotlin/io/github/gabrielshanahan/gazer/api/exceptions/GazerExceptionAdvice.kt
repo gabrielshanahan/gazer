@@ -16,7 +16,6 @@ internal class GazerExceptionAdvice {
         is InvalidGazerTokenException -> HttpStatus.UNAUTHORIZED
         is EntityNotFoundException -> HttpStatus.NOT_FOUND
         is EntityForbidden -> HttpStatus.FORBIDDEN
-        is InvalidEntity -> HttpStatus.BAD_REQUEST
     } into {
         ResponseEntity(ex.gazerMsg, it)
     }

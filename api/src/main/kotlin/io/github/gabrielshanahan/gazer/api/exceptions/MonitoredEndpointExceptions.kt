@@ -5,6 +5,3 @@ class MonitoredEndpointNotFoundException(id: String) :
 
 class MonitoredEndpointForbidden(id: String) :
     EntityForbidden("monitored endpoint", id)
-
-class InvalidMonitoredEndpoint :
-    InvalidEntity("monitored endpoint")
