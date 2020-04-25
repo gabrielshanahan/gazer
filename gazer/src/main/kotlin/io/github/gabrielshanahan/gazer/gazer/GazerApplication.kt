@@ -8,6 +8,7 @@ import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.util.*
 
 internal data class Changes(
     val create: List<MonitoredEndpoint> = emptyList(),

@@ -1,12 +1,12 @@
 package io.github.gabrielshanahan.gazer.data.model
 
-import org.springframework.data.domain.Persistable
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 import javax.persistence.PostLoad
 import javax.persistence.PostPersist
+import org.springframework.data.domain.Persistable
 
 /**
  * Kudos to https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/

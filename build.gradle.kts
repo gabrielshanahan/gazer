@@ -42,7 +42,6 @@ allprojects {
 
 subprojects {
     apply {
-
         plugin("org.jetbrains.kotlin.jvm")
         plugin("jacoco")
         plugin("org.jmailen.kotlinter")
@@ -50,7 +49,6 @@ subprojects {
         plugin("org.jetbrains.dokka")
 
         plugin("io.spring.dependency-management")
-
     }
 
     dependencies {

@@ -2,6 +2,7 @@ package io.github.gabrielshanahan.gazer.gazer
 
 import io.github.gabrielshanahan.gazer.data.DataConfiguration
 import io.ktor.client.HttpClient
+import javax.annotation.PreDestroy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -11,7 +12,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import javax.annotation.PreDestroy
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses = [DataConfiguration::class])
