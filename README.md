@@ -266,12 +266,3 @@ information. It is recommended to browse through before looking at the code.
 #### Tests
 * Kotlin channels appear to completely break Spring tests - executing tests in a normal environment send the whole thing into an infinite loop even before the tests start executing. Therefore, we have to run the tests in an application context where the channel is not loaded as a bean. This makes the tests very cumbersome, and also causes certain beans to be reloaded for every class. This requires special configuration (see application.properties under test/) and caused crashes when the H2 server in the `data` module was exposed for all profiles.
 * Due to MockK having problems with mocking generic classes, we weren't able to mock the HTTP request and the corresponding tests actually do the request.
-  
-  
-
-## Potential for improvement (in no particular order):
-* [Problems](https://docs.spring.io/spring-hateoas/docs/1.1.0.M3/reference/html/#mediatypes.http-problem)
-* Advanced configuration using ENVs
-* R2DBC in gazer
-* Ability to gaze from multiple (physical) locations
-
