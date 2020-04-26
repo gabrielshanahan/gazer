@@ -8,6 +8,7 @@ import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerMsg
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
+import javax.annotation.PreDestroy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -21,8 +22,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.dao.InvalidDataAccessApiUsageException
-import javax.annotation.PreDestroy
 
+/**
+ * Provides the actor which takes care of persisting the results from the gazers. The actor is a bean managed by Spring.
+ */
 @Configuration
 @ObsoleteCoroutinesApi
 class ActorProvider(

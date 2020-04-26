@@ -1,8 +1,9 @@
 package io.github.gabrielshanahan.gazer.gazer.model
 
-import io.github.gabrielshanahan.gazer.data.model.UserEntity
+import io.github.gabrielshanahan.gazer.data.entity.UserEntity
 import java.util.*
 
+/** Adapter for [io.github.gabrielshanahan.gazer.data.entity.UserEntity]. */
 data class User(
     val id: UUID,
     val username: String,
@@ -18,6 +19,7 @@ data class User(
     )
 }
 
+/** Helper extension function for conversion from entity to model */
 internal fun UserEntity.asModel() = User(
     id = id,
     username = username,

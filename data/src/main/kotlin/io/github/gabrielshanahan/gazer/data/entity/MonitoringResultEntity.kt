@@ -1,4 +1,4 @@
-package io.github.gabrielshanahan.gazer.data.model
+package io.github.gabrielshanahan.gazer.data.entity
 
 import java.util.*
 import javax.persistence.Column
@@ -9,6 +9,7 @@ import javax.persistence.Table
 import javax.persistence.Temporal
 import javax.persistence.TemporalType
 
+/** Represents a MonitoringResult */
 @Entity
 @Table(name = "monitoring_result")
 class MonitoringResultEntity(

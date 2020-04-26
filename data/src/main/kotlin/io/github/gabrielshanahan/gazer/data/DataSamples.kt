@@ -1,8 +1,8 @@
 package io.github.gabrielshanahan.gazer.data
 
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
-import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
-import io.github.gabrielshanahan.gazer.data.model.UserEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
+import io.github.gabrielshanahan.gazer.data.entity.UserEntity
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import java.util.*
 

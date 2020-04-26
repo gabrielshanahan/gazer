@@ -2,9 +2,10 @@ package io.github.gabrielshanahan.gazer.api.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY
-import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
 import java.util.*
 
+/** Adapter for [io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity]. */
 data class MonitoringResult(
     @field:JsonProperty(access = READ_ONLY)
     var id: UUID? = null,
@@ -33,4 +34,5 @@ data class MonitoringResult(
     override fun transferTo(entity: MonitoringResultEntity): MonitoringResultEntity = entity
 }
 
-fun MonitoringResultEntity.asModel() = MonitoringResult().apply { fromEntity(this@asModel) }
+/** Helper extension function for conversion from entity to model */
+internal fun MonitoringResultEntity.asModel() = MonitoringResult().apply { fromEntity(this@asModel) }

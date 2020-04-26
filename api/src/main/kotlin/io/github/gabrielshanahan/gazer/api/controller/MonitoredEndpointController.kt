@@ -7,16 +7,23 @@ import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointResponseAssembler
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultCollectionResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultResponseAssembler
+import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.api.model.asModel
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
-import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.func.into
+import java.util.*
+import javax.validation.ConstraintViolationException
+import javax.validation.Valid
+import javax.validation.Validator
+import javax.validation.constraints.Min
+import javax.validation.groups.Default
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.validation.annotation.Validated
@@ -30,13 +37,10 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
-import javax.validation.ConstraintViolationException
-import javax.validation.Valid
-import javax.validation.Validator
-import javax.validation.constraints.Min
-import javax.validation.groups.Default
 
+/**
+ * Contains endpoints pertaining to MonitoredEndpoints
+ */
 @RestController
 @RequestMapping("/monitoredEndpoints")
 @Validated
@@ -51,6 +55,12 @@ class MonitoredEndpointController(
     userRepository: UserRepository
 ) : AbstractController(userRepository) {
 
+    /**
+     * If [token] is valid, return all MonitoredEndpoints owned by given user, otherwise throw
+     * [InvalidGazerTokenException].
+     *
+     * @see withAuthedUser
+     */
     @GetMapping("")
     fun getAll(
         @RequestHeader(value = "GazerToken") token: String
@@ -61,6 +71,14 @@ class MonitoredEndpointController(
             resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
     }
 
+    /**
+     * Checks [token] validity, then returns MonitoredEndpoint given by [id]. Throws one of
+     * [InvalidGazerTokenException], [io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden] or
+     * [MonitoredEndpointNotFoundException], depending on the situation.
+     *
+     * @see withAuthedUser
+     * @see authAndFind
+     */
     @GetMapping("/{id}")
     fun getById(
         @RequestHeader(value = "GazerToken") token: String,
@@ -69,6 +87,17 @@ class MonitoredEndpointController(
         endpoint into resourceAssembler::toModel into responseAssembler::toOkResponse
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
 
+    /**
+     * Checks [token] validity, then returns [limit] MonitoringResults related to MonitoredEndpoint given by [id],
+     * with the most recent being returned first. If no [limit] is specified, returns all MonitoringResults.
+     *
+     * Throws one of [InvalidGazerTokenException],
+     * [io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden] or
+     * [MonitoredEndpointNotFoundException], depending on the situation.
+     *
+     * @see withAuthedUser
+     * @see authAndFind
+     */
     @GetMapping("/{id}/monitoringResults")
     fun getRelatedResults(
         @RequestHeader(value = "GazerToken") token: String,
@@ -88,6 +117,11 @@ class MonitoredEndpointController(
             resultResourceAssembler::toCollectionModel into resultResponseAssembler::toOkResponse
     } orWhenNoneFound { throw MonitoredEndpointNotFoundException(id) }
 
+    /**
+     * Checks [token] validity, then creates new MonitoredEndpoint.
+     *
+     * @see withAuthedUser
+     */
     @Validated(Default::class, OnCreate::class)
     @PostMapping("")
     fun createEndpoint(
@@ -102,6 +136,14 @@ class MonitoredEndpointController(
         ) into endpointRepository::save into resourceAssembler::toModel into responseAssembler::toCreatedResponse
     }
 
+    /**
+     * Checks [token] validity and either creates or updates the given [id]. If the MonitoredEndpoint ends up being
+     * created, the ID is not preserved. Throws one of [InvalidGazerTokenException] or
+     * [io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden], depending on the situation.
+     *
+     * @see withAuthedUser
+     * @see authAndFind
+     */
     @PutMapping("/{id}")
     fun replaceEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
@@ -121,6 +163,13 @@ class MonitoredEndpointController(
         createEndpoint(token, endpoint)
     }
 
+    /**
+     * Checks [token] validity, then deletes the given [id].
+     *
+     * Throws one of [InvalidGazerTokenException],
+     * [io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden] or
+     * [MonitoredEndpointNotFoundException], depending on the situation.
+     */
     @DeleteMapping("/{id}")
     fun deleteEndpoint(
         @RequestHeader(value = "GazerToken") token: String,

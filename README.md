@@ -233,6 +233,7 @@ information. It is recommended to browse through before looking at the code.
 * The RestController for MonitoredEndpoints define standard CRUD endpoints, as well as an endpoint to list results related to a particular endpoint
 * The RestController for MonitoringResults contains only endpoints for retrieval. This is a partial consequence of design decision (1) - gazers won't be using the API, and we don't want users to have the ability to manipulate results, since that kind of goes against the purpose of this app.
 * A common ancestor for both endpoints is provided solely to have a single place for defining dsl-specific extension functions that are used in both controllers.
+* The DSL includes functions for constructing HAL-FORMS links. Spring already offers such a [DSL](https://github.com/spring-projects/spring-hateoas/tree/0e02d4f04117e03ab94110c9de09b2ac28d55599/src/main/kotlin/org/springframework/hateoas/server/mvc), but at the time of writing it was found to behave in unexpected ways.
 #### Data-constraints
 * The motivation for choosing a minimal monitored interval was to prevent a hypothetical customer using a hypothetical production-ready version of this app from turning it into a DoSing tool.
 #### Misc

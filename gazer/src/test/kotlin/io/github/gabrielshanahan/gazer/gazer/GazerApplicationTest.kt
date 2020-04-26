@@ -1,7 +1,7 @@
 package io.github.gabrielshanahan.gazer.gazer
 
 import io.github.gabrielshanahan.gazer.data.DataSamples
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.func.into
@@ -69,7 +69,7 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
         val mockJob = spyk<Job>()
 
         val gazers: GazerMap = mutableMapOf(
-            updatedEndpoint.id to Gazer(updatedEndpoint, mockJob)
+            updatedEndpoint.id to GazerPair(updatedEndpoint, mockJob)
         )
 
         val gazerApp = GazerApplication(mockk(), mockk(), mockk(), this, properties)
@@ -97,7 +97,7 @@ class GazerApplicationTest(@Autowired private val userRepo: UserRepository) {
         val mockJob = spyk<Job>()
 
         val gazers: GazerMap = mutableMapOf(
-            removedEndpoint.id to Gazer(removedEndpoint, mockJob)
+            removedEndpoint.id to GazerPair(removedEndpoint, mockJob)
         )
 
         val gazerApp = GazerApplication(mockk(), mockk(), mockk(), this, properties)

@@ -1,10 +1,11 @@
 package io.github.gabrielshanahan.gazer.gazer.model
 
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
 import io.github.gabrielshanahan.moroccode.compareUsingFields
 import io.github.gabrielshanahan.moroccode.hash
 import java.util.*
 
+/** Adapter for [io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity]. */
 class MonitoredEndpoint(
     var id: UUID,
     var name: String,
@@ -32,6 +33,7 @@ class MonitoredEndpoint(
     )
 }
 
+/** Helper extension function for conversion from entity to model */
 internal fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint(
     id = id,
     name = name,

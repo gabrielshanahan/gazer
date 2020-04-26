@@ -8,6 +8,7 @@ import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
@@ -21,21 +22,39 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import java.util.*
 
+/**
+ * Represents a set of changes that need to be made to the current gazers.
+ *
+ * @see GazerApplication.collectChangesFrom
+ * @see GazerApplication.update
+ */
 data class Changes(
     val create: List<MonitoredEndpoint> = emptyList(),
     val update: List<MonitoredEndpoint> = emptyList(),
     val delete: Set<UUID> = emptySet()
 )
 
-data class Gazer(
+/**
+ * The endpoints need to be stored with the jobs (gazers) that represent them, to be able to check for updates (such as
+ * changed URLs).
+ */
+data class GazerPair(
     val endpoint: MonitoredEndpoint,
     val job: Job
 )
 
-typealias GazerMap = MutableMap<UUID, Gazer>
+/** The type used to store the list of currently running gazers along with all necessary information */
+typealias GazerMap = MutableMap<UUID, GazerPair>
 
+/**
+ * Runs the gazing functionality as a CommandLineRunner. Actual gazing is delegated to an instance of [GazerService].
+ *
+ * The provided [gazerScope] is used to run all the coroutines.
+ *
+ * @see GazerConfiguration
+ * @see GazerService
+ */
 @SpringBootApplication
 class GazerApplication(
     private val endpointRepo: MonitoredEndpointRepository,
@@ -46,6 +65,7 @@ class GazerApplication(
 ) : CommandLineRunner, CoroutineScope by gazerScope {
     private val log: Logger = LoggerFactory.getLogger(GazerApplication::class.java)
 
+    /** Constructs list of newly created/updated/removed endpoints with respect to the currently running gazers. */
     infix fun GazerMap.collectChangesFrom(endpoints: List<MonitoredEndpoint>) = Changes(
         create = endpoints.filter {
             it.id !in keys
@@ -58,6 +78,10 @@ class GazerApplication(
         }
     )
 
+    /**
+     * Launches a coroutine representing a gazer for the given [endpoint]. The actual gazing is left to the
+     * implementation of GazerService.
+     */
     fun launchGazer(endpoint: MonitoredEndpoint): Job = launch {
         log.info("Gazer created for ${endpoint.toShortStr()}")
         try {
@@ -70,16 +94,19 @@ class GazerApplication(
         }
     }
 
+    /**
+     * Acts on the data constructed by [collectChangesFrom].
+     */
     fun update(gazers: GazerMap): Changes.() -> Unit = {
         create.forEach {
             log.info("Creating gazer for ${it.toShortStr()}")
-            gazers[it.id] = Gazer(it, launchGazer(it))
+            gazers[it.id] = GazerPair(it, launchGazer(it))
         }
 
         update.forEach {
             log.info("Updating gazer for ${gazers[it.id]?.endpoint?.toShortStr()}")
             gazers[it.id]?.job?.cancel()
-            gazers[it.id] = Gazer(it, launchGazer(it))
+            gazers[it.id] = GazerPair(it, launchGazer(it))
         }
 
         delete.forEach {
@@ -89,6 +116,13 @@ class GazerApplication(
         }
     }
 
+    /**
+     * The main application loop. Periodically fetches all MonitoredEndpoints from the database, and
+     * creates/updates/removes gazers as necessary.
+     *
+     * @see collectChangesFrom
+     * @see update
+     */
     suspend fun gaze(gazers: GazerMap) {
         while (isActive) {
             val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
@@ -97,6 +131,9 @@ class GazerApplication(
         }
     }
 
+    /**
+     * Delegates to [gaze].
+     */
     override fun run(vararg args: String) {
         runBlocking {
             gaze(mutableMapOf())

@@ -9,18 +9,23 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.readText
 import io.ktor.util.date.toJvmDate
+import java.nio.channels.UnresolvedAddressException
+import java.util.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.nio.channels.UnresolvedAddressException
-import java.util.*
 
+/**
+ * Responsible for gazing at an endpoint.
+ *
+ * @see io.github.gabrielshanahan.gazer.gazer.GazerApplication
+ */
 @Service
-class GazerServiceImpl(val client: HttpClient) : GazerService {
+class SimpleGazerService(val client: HttpClient) : GazerService {
 
-    private val log: Logger = LoggerFactory.getLogger(GazerServiceImpl::class.java)
+    private val log: Logger = LoggerFactory.getLogger(SimpleGazerService::class.java)
 
     override suspend fun gaze(endpoint: MonitoredEndpoint, persistor: SendChannel<PersistMsg>) {
         log.info("Gazing at ${endpoint.toShortStr()}")

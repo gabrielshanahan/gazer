@@ -1,8 +1,9 @@
 package io.github.gabrielshanahan.gazer.gazer.model
 
-import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
 import java.util.*
 
+/** Adapter for [io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity]. */
 data class MonitoringResult(
     val id: UUID? = null,
     val checked: Date,
@@ -20,6 +21,7 @@ data class MonitoringResult(
     )
 }
 
+/** Helper extension function for conversion from entity to model */
 internal fun MonitoringResultEntity.asModel() = MonitoringResult(
     id = id,
     checked = checked,

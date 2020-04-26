@@ -1,9 +1,10 @@
 package io.github.gabrielshanahan.gazer.api.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import io.github.gabrielshanahan.gazer.data.model.UserEntity
+import io.github.gabrielshanahan.gazer.data.entity.UserEntity
 import java.util.*
 
+/** Adapter for [io.github.gabrielshanahan.gazer.data.entity.UserEntity]. */
 data class User(
     var id: UUID? = null,
     var username: String? = null,
@@ -22,4 +23,5 @@ data class User(
     override infix fun transferTo(entity: UserEntity): UserEntity = entity
 }
 
-fun UserEntity.asModel() = User().apply { fromEntity(this@asModel) }
+/** Helper extension function for conversion from entity to model */
+internal fun UserEntity.asModel() = User().apply { fromEntity(this@asModel) }

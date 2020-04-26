@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY
 import io.github.gabrielshanahan.gazer.api.validation.NullOrNotBlank
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
-import org.hibernate.validator.constraints.URL
+import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
 import java.util.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
+import org.hibernate.validator.constraints.URL
 
+/** Adapter for [io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity]. */
 data class MonitoredEndpoint(
     @field:JsonProperty(access = READ_ONLY)
     var id: UUID? = null,
@@ -58,4 +59,5 @@ data class MonitoredEndpoint(
     }
 }
 
-fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint().apply { fromEntity(this@asModel) }
+/** Helper extension function for conversion from entity to model */
+internal fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint().apply { fromEntity(this@asModel) }

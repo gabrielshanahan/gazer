@@ -6,6 +6,7 @@ import javax.validation.ConstraintValidatorContext
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
+/** Field must either be null or consist of at least one character that is not whitespace. */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY_GETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
@@ -16,6 +17,7 @@ annotation class NullOrNotBlank(
     val payload: Array<KClass<out Payload>> = []
 )
 
+/** Validator for [NullOrNotBlank] */
 class NullOrNotBlankValidator : ConstraintValidator<NullOrNotBlank, String?> {
 
     override fun isValid(str: String?, constraintValidatorContext: ConstraintValidatorContext): Boolean =

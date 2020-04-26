@@ -1,10 +1,11 @@
-package io.github.gabrielshanahan.gazer.data.model
+package io.github.gabrielshanahan.gazer.data.entity
 
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
+/** Represents a User */
 @Entity
 @Table(name = "user")
 class UserEntity(

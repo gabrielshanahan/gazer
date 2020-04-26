@@ -7,9 +7,17 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 
+/**
+ * Controller advice that deals with non-validation exceptions. Returns JSON payload describing the error.
+ *
+ * @see GazerException
+ */
 @ControllerAdvice
 internal class GazerExceptionAdvice {
 
+    /**
+     * Deals with all subclasses of [GazerException]
+     */
     @ResponseBody
     @ExceptionHandler(GazerException::class)
     fun handleException(ex: GazerException) = when (ex) {

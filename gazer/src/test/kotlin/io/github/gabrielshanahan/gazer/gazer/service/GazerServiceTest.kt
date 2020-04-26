@@ -21,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExperimentalCoroutinesApi
 class GazerServiceTest(
     @Autowired private val userRepo: UserRepository,
-    @Autowired val gazerService: GazerServiceImpl
+    @Autowired val gazerService: SimpleGazerService
 ) {
     @MockkBean
     private lateinit var persistor: SendChannel<PersistMsg>

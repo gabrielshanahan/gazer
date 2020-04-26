@@ -1,6 +1,5 @@
-package io.github.gabrielshanahan.gazer.data.model
+package io.github.gabrielshanahan.gazer.data.entity
 
-import org.hibernate.annotations.CreationTimestamp
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -11,7 +10,9 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.persistence.Temporal
 import javax.persistence.TemporalType
+import org.hibernate.annotations.CreationTimestamp
 
+/** Represents a MonitoredEndpoint */
 @Entity
 @Table(name = "monitored_endpoint")
 class MonitoredEndpointEntity(

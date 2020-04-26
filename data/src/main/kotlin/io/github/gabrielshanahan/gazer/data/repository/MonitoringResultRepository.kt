@@ -1,13 +1,14 @@
 package io.github.gabrielshanahan.gazer.data.repository
 
-import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
-import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
-import io.github.gabrielshanahan.gazer.data.model.UserEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
+import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
+import io.github.gabrielshanahan.gazer.data.entity.UserEntity
+import java.util.*
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import java.util.*
 
+/** Used to access MonitoringResults based on the user that is "logged in" and possibly a MonitoringEndpoint parent */
 @Repository
 interface MonitoringResultRepository : JpaRepository<MonitoringResultEntity, UUID> {
     fun getAllByMonitoredEndpointUserOrderByCheckedDesc(user: UserEntity): List<MonitoringResultEntity>

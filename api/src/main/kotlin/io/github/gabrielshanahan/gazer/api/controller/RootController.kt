@@ -9,8 +9,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * The root endpoint, returning only links to supported operations. Intended for self-discovery purposes.
+ */
 @RestController
 class RootController {
+
+    /**
+     * The root endpoint, returning only links to supported operations. Intended for self-discovery purposes.
+     */
     @GetMapping("/")
     fun root(): ResponseEntity<RepresentationModel<*>> {
         val model = RepresentationModel<RepresentationModel<*>>()
