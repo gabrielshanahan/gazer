@@ -12,7 +12,7 @@ This application was created purely for educational purposes and **should by no 
 
 * [Get up and running](#get-up-and-running)
 * [Usage](#usage)
-  * [Examples:](#examples-)
+  * [Examples](#examples)
 * [Design decisions](#design-decisions)
 * [Architecture](#architecture)
   * [Services](#services)
@@ -20,7 +20,7 @@ This application was created purely for educational purposes and **should by no 
   * [Modules](#modules)
 * [Project documentation](#project-documentation)
   * [Run](#run)
-  * [Build & Tooling](#build---tooling)
+  * [Build & Tooling](#build--tooling)
 * [Module documentation](#module-documentation)
   * [Func](#func)
   * [Data](#data)
@@ -82,7 +82,7 @@ The API is HATEOAS compliant and returns HAL-FORMS JSON making discovery easy:
 curl -i localhost:8080 -H "Content-Type: application/json" -H "GazerToken: dcb20f8a-5657-4f1b-9f7f-ce65739b359e"
 ```
 
-### Examples:
+### Examples
 ```bash
 curl -i localhost:8080/monitoredEndpoints -X POST -d '{"name":"Applifting homepage", "url":"http://www.applifting.cz", "monitoredInterval":10}' -H "Content-Type: application/json" -H "GazerToken: dcb20f8a-5657-4f1b-9f7f-ce65739b359e"
 curl -i localhost:8080/monitoredEndpoints/<endpoint_id>/monitoringResults?limit=10 -H "Content-Type: application/json" -H "GazerToken: dcb20f8a-5657-4f1b-9f7f-ce65739b359e"
