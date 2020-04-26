@@ -7,4 +7,5 @@ import org.springframework.stereotype.Component
 @Component
 class GazerProperties {
     var syncRate: Long = 1000
+    var bufferSize: Int = 1024
 }

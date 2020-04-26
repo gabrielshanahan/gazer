@@ -5,12 +5,14 @@ import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepositor
 import io.github.gabrielshanahan.gazer.func.into
 import io.github.gabrielshanahan.gazer.gazer.cancelAndBlock
 import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
+import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerMsg
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
 import javax.annotation.PreDestroy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.yield
@@ -25,12 +27,15 @@ import org.springframework.dao.InvalidDataAccessApiUsageException
 @ObsoleteCoroutinesApi
 class ActorProvider(
     val endpointRepo: MonitoredEndpointRepository,
-    val resultRepo: MonitoringResultRepository
+    val resultRepo: MonitoringResultRepository,
+    properties: GazerProperties
 ) : CoroutineScope by CoroutineScope(Dispatchers.Unconfined) {
 
     private val log: Logger = LoggerFactory.getLogger(ActorProvider::class.java)
 
-    val persistor: SendChannel<GazerMsg> = actor(capacity = 1024) {
+    private val bufferSize = if (properties.bufferSize < 0) Channel.UNLIMITED else properties.bufferSize
+
+    val persistor: SendChannel<GazerMsg> = actor(capacity = bufferSize) {
         for (msg in channel) {
             when (msg) {
                 is PersistMsg -> {

@@ -7,6 +7,7 @@ import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepositor
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.gazer.TestConfiguration
 import io.github.gabrielshanahan.gazer.gazer.model.asModel
+import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
 import io.mockk.every
 import io.mockk.verify
@@ -27,6 +28,8 @@ class ActorProviderTest(@Autowired private val userRepo: UserRepository) {
 
     private val sharedData = DataSamples(userRepo)
 
+    private val properties = GazerProperties()
+
     @MockkBean
     lateinit var endpointRepo: MonitoredEndpointRepository
 
@@ -46,7 +49,7 @@ class ActorProviderTest(@Autowired private val userRepo: UserRepository) {
             endpointRepo.saveAndFlush(resultEntity.monitoredEndpoint)
         } returns(resultEntity.monitoredEndpoint)
 
-        val actor = ActorProvider(endpointRepo, resultRepo).getActor()
+        val actor = ActorProvider(endpointRepo, resultRepo, properties).getActor()
 
         actor.send(PersistMsg(resultEntity.asModel()))
 
