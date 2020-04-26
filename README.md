@@ -8,7 +8,10 @@ The app runs on top of MySQL and exposes a REST API allowing CRUD operations on 
 listing the results. It is written in Kotlin and Spring, built using Gradle, and can be started up via. Gradle
 tasks or in containers using `docker-compose`.
 
-This application was created purely for educational purposes and **should by no means be used in a production environment**.
+This application was created purely for educational purposes only and **should by no means be used in a production environment**.
+
+---
+---
 
 ## Get up and running
 Clone the repository and build the modules:
@@ -49,6 +52,9 @@ After this service has started, start the remaining two in any order
 ./gradlew :gazer:bootRun
 ```
 
+---
+---
+
 ## Usage
 The API is available at localhost:8080. Authentication is done via token in a GazerToken header. There are two
 tokens hardcoded into the application to make testing simpler.
@@ -70,6 +76,9 @@ curl -i localhost:8080/monitoredEndpoints -X POST -d '{"name":"Applifting homepa
 curl -i localhost:8080/monitoredEndpoints/<endpoint_id>/monitoringResults?limit=10 -H "Content-Type: application/json" -H "GazerToken: dcb20f8a-5657-4f1b-9f7f-ce65739b359e"
 ```
 
+---
+---
+
 ## Design decisions
 1) The API and gazing services should be entirely independent of one another, since architectural requirements such as scalability and availability
 for these components are completely different. As a consequence, the gazing service will interact directly with database repositories.
@@ -79,6 +88,8 @@ manner
 possible. This is limited by the blocking nature of JDBC.
 4) All data-constraints are defined in the business layers. No data-constraints (apart from non-nullability and data type) are defined at the persistence level. This is for the same reason that they wouldn't be defined as part of the specification of pen and paper.  
 
+---
+---
 
 ## Architecture
 The app consists of 3 Spring services implemented across 4 modules and runs in 4 Docker containers.
@@ -100,10 +111,14 @@ The app consists of 3 Spring services implemented across 4 modules and runs in 4
 * gazer - Owns the implementation of all gazing functionality. Depends on data and func
 * func - Stuffed chock-full with utility functions. Specifically, two of them. Even more specifically, a [blue and red version](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/) of the same thing.
 
+---
+---
+
 ## Project documentation
---CHANGE-- and put under module
 This section aims to give a high-level overview of the application and highlight important or non-obvious pieces of
-information. It is recommended to browse through before looking at the code.
+information. It is recommended to browse through before implementing any changes.
+
+---
 
 ### Run
 * The Spring services implement a *dev* and *prod* profile to facilitate configurations for local runs using
@@ -132,6 +147,8 @@ host:port combination becomes available within a certain timeout period, which c
 start the data service first (`./gradlew :data:bootRun`) and only after it has finished booting can the other services
 be started (`./gradlew :api:bootRun` and `./gradlew :gazer:bootRun`). No script is provided for this, since the expectation
 is that while developing, you want to execute these tasks in separate terminals and able to read the applications output
+
+---
 
 ### Build & Tooling
 * We use Gradle configured via Kotlin scripts as a build tool, JUnit5 for testing, Jacoco for test coverage, ktlint for
@@ -190,12 +207,19 @@ The default SonarQube Gradle task also runs tests, and fails if tests fail. To g
 ./gradlew sonarqube -x test
 ```
 
+---
+---
+
 ## Module documentation      
 This section aims to give a high-level overview of every module and highlight important or non-obvious pieces of
 information. It is recommended to browse through before looking at the code.
 
+---
+
 ### Func
 * Contains the `into` function (and its suspending variant), which is basically a piping operator. It is used throughout the project to decrease the amount of nesting needed.
+
+---
 
 ### Data
 #### Structure
@@ -211,6 +235,8 @@ information. It is recommended to browse through before looking at the code.
 * Also exposes a web server on 8081. Web dependencies need to be included for the H2 console to work, but we can also use this to find out when the service is up and running, i.e. when the DB is initialized correctly. When running via. docker compose, the dependent containers wait until a web server is reachable on this port.
   * The port is changed from 8081 to avoid clashes with the API service when running everything locally.
 * Logger format changed to be consistent with the gazer module, where we need to show the entire thread and coroutine names (default settings truncated the beginnings).
+
+---
 
 ### API
 #### Nomenclature
@@ -241,6 +267,8 @@ information. It is recommended to browse through before looking at the code.
 #### Tests
 * Only simple tests for CRUD operations and very basic validation where written. There are no tests for HATEOAS compliance etc.
 * Running the tests concurrently would sometimes cause some of them to fail randomly, most likely because Spring uses the same beans in all tests. HTTPGetTest test lifecycle is per class for this reason, and apparently things seem to be working, but if any problems occur, just run the tests sequentially. A change in the tests design is needed to address this issue properly.
+
+---
 
 ### Gazer
 #### Nomenclature
