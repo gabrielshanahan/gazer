@@ -71,12 +71,13 @@ curl -i localhost:8080/monitoredEndpoints/<endpoint_id>/monitoringResults?limit=
 ```
 
 ## Design decisions
-* The interface with users should be completely independent of gazing functionality, since scaling and availability requirements
-for these components are fundamentally different
-* Heavy usage of the user-facing component is not anticipated to be very high and is therefore implemented in a blocking, synchronous
+1) The API and gazing services should be entirely independent of one another, since architectural requirements such as scalability and availability
+for these components are completely different. As a consequence, the gazing service will interact directly with database repositories.
+2) Heavy usage of the user-facing component is not anticipated to be very high and is therefore implemented in a blocking, synchronous
 manner
-* The gazing functionality is basically completely IO bound, so an effort is made to be as non-blocking & asynchronous as
+3) The gazing functionality is basically completely IO bound, so an effort is made to be as non-blocking & asynchronous as
 possible. This is limited by the blocking nature of JDBC.
+4) All data-constraints are defined in the business layers. No data-constraints (apart from non-nullability and data type) are defined at the persistence level. This is for the same reason that they wouldn't be defined as part of the specification of pen and paper.  
 
 
 ## Architecture
@@ -99,7 +100,8 @@ The app consists of 3 Spring services implemented across 4 modules and runs in 4
 * gazer - Owns the implementation of all gazing functionality. Depends on data and func
 * func - Stuffed chock-full with utility functions. Specifically, two of them. Even more specifically, a [blue and red version](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/) of the same thing.
 
-## Documentation
+## Project documentation
+--CHANGE-- and put under module
 This section aims to give a high-level overview of the application and highlight important or non-obvious pieces of
 information. It is recommended to browse through before looking at the code.
 
@@ -132,7 +134,7 @@ be started (`./gradlew :api:bootRun` and `./gradlew :gazer:bootRun`). No script 
 is that while developing, you want to execute these tasks in separate terminals and able to read the applications output
 
 ### Build & Tooling
-* We use Gradle configured via Kotlin scripts as a build tool, JUnit for testing, Jacoco for test coverage, ktlint for
+* We use Gradle configured via Kotlin scripts as a build tool, JUnit5 for testing, Jacoco for test coverage, ktlint for
 linting, detekt for static analysis and Sonarqube for additional validation and visualisation
 #### Gradle
 * The configuration is spread across several `build.gradle.kts` files - one located at the root of the project, the
@@ -142,6 +144,8 @@ rest in each module
 * The root build.gradle.kts contains configurations and plugins used throughout the project. Some of those are necessary to make Spring and Kotlin play nice together.
 * Services are built using the `bootJar` gradle task, which creates a `<module>-<version>-boot.jar` file in <module>/build/libs
 * If a module is needed as a regular dependency, it is built using the `jar` task, which creates a `<module>-<version>.jar` file in <module>/build/libs
+#### JUnit5
+* JUnit is configured to run tests concurrently
 #### [ktlint](https://ktlint.github.io/)
 * Via. [kotlinter](https://github.com/jeremymailen/kotlinter-gradle) 
 * Adds `lintKotlin` and `formatKotlin` tasks. The former just lints, the latter also does the necessary formatting.
@@ -151,7 +155,7 @@ rest in each module
 * The config can be found at `config/detekt/detekt.yml`
 * Allows generating a baseline (ie. a snapshot of all current issues, which are subsequently ignored), located at `<module>/config/detekt/baseline.xml`
 * We include a wrapper around ktlint
-#### [SonarQube](https://www.sonarqube.org/)
+#### [SonarQube](https://www.sonarqube.org/) (skip if not using)
 * Kotlin is now supported by SonarQube, which wasn't always the case. This is why a [3rd party plugin](https://github.com/arturbosch/sonar-kotlin) was created some time ago to interface detekt and SonarQube.
   * Unfortunately, it conflicts with the built-in plugin - if the 3rd party plugin is installed, the built-in plugin must be disabled
   * Therefore, we present two different ways to get SonarQube up and running - vanilla flavour, which uses the builtin Kotlin plugin, and Detekt flavour, which uses the detekt-plugin
@@ -186,24 +190,82 @@ The default SonarQube Gradle task also runs tests, and fails if tests fail. To g
 ./gradlew sonarqube -x test
 ```
 
+## Module documentation      
+This section aims to give a high-level overview of every module and highlight important or non-obvious pieces of
+information. It is recommended to browse through before looking at the code.
+
 ### Func
-* Contains the `into` function (and its suspending variant), which is basically a piping operator. This used throughout the code, which often decreases the amount of nesting needed
+* Contains the `into` function (and its suspending variant), which is basically a piping operator. It is used throughout the project to decrease the amount of nesting needed.
 
 ### Data
-#### Code
-* Contains 2 packages: model and repository
-  * The model package contains JPA entities. A common AbstractEntity ancestor defines functionality to auto-generate binary UUIDs.
-  * The repository package defines corresponding JPA repositories, along with functions necessary in the api and gazer modules.
+#### Structure
+* Contains 2 packages:
+  * The **model** package contains JPA entities. A common `AbstractEntity` ancestor defines functionality to auto-generate binary UUIDs.
+  * The **repository** package defines corresponding JPA repositories, along with functions necessary in the api and gazer modules.
+#### Implementation
+* Contains definitions for 3 tables (`Users` -1:N- `MonitoredEndpoint` -1:N- `MonitoringResults`) and 3 corresponding repositories
+* The repositories contain searches for entities based on their parent, while users are searched for by token (see the Authentication section in api module docs)
+#### Misc
 * Contains resources/*.sql files that initialize the MySQL/H2 databases with the hardcoded users, with the proper one being [selected by Spring Boot via. the `spring.datasource.platform` property](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-initialize-a-database-using-spring-jdbc).
-* Exposes a H2 server on 9092 under the dev profile
+* Exposes a H2 server on 9092 under the dev profile. Restricting the profile is important, otherwise gazer tests will fail unless executed one class at a time, because the server gets started up for every class. This is a consequence of the way we are forced to setup the application context for gazer tests (see bellow for more info). 
 * Also exposes a web server on 8081. Web dependencies need to be included for the H2 console to work, but we can also use this to find out when the service is up and running, i.e. when the DB is initialized correctly. When running via. docker compose, the dependent containers wait until a web server is reachable on this port.
   * The port is changed from 8081 to avoid clashes with the API service when running everything locally.
 * Logger format changed to be consistent with the gazer module, where we need to show the entire thread and coroutine names (default settings truncated the beginnings).
-#### Tests
-* JUnit is configured to run tests concurrently
 
 ### API
-* 
+#### Nomenclature
+* Objects tightly coupled to the database are called *entities*.
+* Module-specific adapters for *entities* are called *models* - they loosen the coupling between the database schema and the data domain of the module.
+* Models or collections of models enriched by links to related endpoints are called *resources*.
+* A *response* is what actually gets sent back, i.e. a *resource* + optional headers, HTTP status code, etc.
+#### Structure
+* Contains 4 packages:
+  * The **controller** package contains code that handles incoming requests. It contains `RestController`s, defines a small DSL and contains two additional packages:
+    * The **resource** package contains code that creates *resources* out of *models*/*collections*, in accordance with HATEOAS.
+    * The **response** package contains code that creates *responses* out of *resources*.
+  * The **exceptions** package defines domain-specific exceptions and handlers thereof
+  * The **model** package contains the *models*, functions for transforming between *models* and *entities*, and defines constraints on the data, i.e. which properties can be set and what values are acceptable 
+  * The **validation** package contains code that handles validations, along with a custom NullOrNotBlank validation and OnCreate validation group
+#### Implementation
+* To facilitate simple testing, authentication is done by comparing a token sent in a GazerToken header to a hardcoded token in the database. This is done manually by each method of the controllers.
+  * A (pretty big) attempt was made to create a custom authentication scheme using Spring Security that would support this. One of the main motivations was the consequent ability to use Spring Data REST and get HATEOAS compliance OOTB. We actually almost succeeded, but due to problems with configuring endpoints which should be ignored combined with low confidence the solution wouldn't cause problems down the road, we decided to abandon this approach in the end. The work done can be found using `git log --full-history -- api/src/main/kotlin/io/github/gabrielshanahan/gazer/api/security`.
+* All endpoints return HAL-FORMS JSON on success, and regular json on error. Implementing [Problems](https://docs.spring.io/spring-hateoas/docs/1.1.0.M3/reference/html/#mediatypes.http-problem) would be one way of unifying this.
+* The RestController for MonitoredEndpoints define standard CRUD endpoints, as well as an endpoint to list results related to a particular endpoint
+* The RestController for MonitoringResults contains only endpoints for retrieval. This is a partial consequence of design decision (1) - gazers won't be using the API, and we don't want users to have the ability to manipulate results, since that kind of goes against the purpose of this app.
+* A common ancestor for both endpoints is provided solely to have a single place for defining dsl-specific extension functions that are used in both controllers.
+#### Data-constraints
+* The motivation for choosing a minimal monitored interval was to prevent a hypothetical customer using a hypothetical production-ready version of this app from turning it into a DoSing tool.
+#### Misc
+* Logger format changed to be consistent with the gazer module, where we need to show the entire thread and coroutine names (default settings truncated the beginnings).
+#### Tests
+* Only simple tests for CRUD operations and very basic validation where written. There are no tests for HATEOAS compliance etc.
+* Running the tests concurrently would sometimes cause some of them to fail randomly, most likely because Spring uses the same beans in all tests. HTTPGetTest test lifecycle is per class for this reason, and apparently things seem to be working, but if any problems occur, just run the tests sequentially. A change in the tests design is needed to address this issue properly.
+
+### Gazer
+#### Nomenclature
+* Conceptually, a *gazer* is code that periodically monitors one specific endpoint, i.e. every endpoint has its own gazer. The manifestation of a *gazer* is a coroutine.
+* A *model* has the same meaning as in the `api` module.
+#### Structure
+* Contains 4 packages:
+  * The **actor** package contains the actor responsible for persisting the gazer results.
+  * The **model** package contains the *models*, functions for transforming between *models* and *entities*, along with some logging helper functions.
+  * The **properties** package contains definition of custom configuration properties for the gazer module.
+  * The **service** package contains code implementing the actual gazing, i.e. HTTP request execution.
+* The code which actually brings all the above together is contained in **GazerApplication**. 
+#### Implementation
+* The functionality is implemented as a ComandLineRunner.
+* When the service starts, one gazer per endpoint is launched. The database is periodically polled for the list of all endpoints and the results compared with the current sets of gazers, which are added/removed/updated as necessary. The default polling period is 1s and can be controlled by the `gazer.syncRate` property.
+  * Periodically fetching all the endpoints from the database would not scale well. An ideal design would facilitate communication of create/update/delete events across services through a messaging system.
+* A supervisor scope is used to prevent the failure of one gazer to affect the others.
+* Gazers don't deal with persistance, instead sending the results to a Kotlin channel. There are multiple reasons for this, ranging from separation of concerns, the fact that JDBC is blocking, and even if it wasn't, we can't guarantee a monitored interval if its dependent on external influences, such network latency, DB load etc., by design. 
+* A very simple actor based model is used to implement the channel. Kotlin actors are used for this, even though they are marked as obsolete. The reason is that we would just end up reimplementing exactly what is already there.
+* Backpressure between the actor and gazers is controlled by a buffer on the side of the actor. If the buffer is full, gazers attempting to send a new result suspend until room is made. By default, the buffer size is 1024 and can be controlled by the `gazer.bufferSize` property. If set to a negative number, the buffer becomes unlimited.
+  * Currently, the actor processes and persists one message at a time. A low-hanging-fruit optimization would be to batch-process all the messages in the buffer. 
+#### Misc
+* The functions constructing truncated string representations of endpoints/results unfortunately cannot be easily parametrised by configuration properties, because we have no way to inject beans into top-level functions.
+#### Tests
+* Kotlin channels appear to completely break Spring tests - executing tests in a normal environment send the whole thing into an infinite loop even before the tests start executing. Therefore, we have to run the tests in an application context where the channel is not loaded as a bean. This makes the tests very cumbersome, and also causes certain beans to be reloaded for every class. This requires special configuration (see application.properties under test/) and caused crashes when the H2 server in the `data` module was exposed for all profiles.
+* Due to MockK having problems with mocking generic classes, we weren't able to mock the HTTP request and the corresponding tests actually do the request.
   
   
 
@@ -211,28 +273,5 @@ The default SonarQube Gradle task also runs tests, and fails if tests fail. To g
 * [Problems](https://docs.spring.io/spring-hateoas/docs/1.1.0.M3/reference/html/#mediatypes.http-problem)
 * Advanced configuration using ENVs
 * R2DBC in gazer
-* Ability to gaze from multiple locations
-  
-
- 
-
-## About
-- Uses layered jars to achieve faster builds
-- Uses docker-entrypoint-initdb.d from mysql docker image to setup gazer user for mysql, see docker-compose.yml
-- ./gaze checks for necessary environment variables and runs docker-compose up
-- docker-compose down deletes data, stop does not
-- If timeout for database startup is not enough, edit it in wfi_args in docker-compose.yml
-- has dev and prod profile - dev uses H2, and is selected automatically when running bootRun Gradle task. The prod 
-profile is selected in Dockerfile. Fails fast if no profile is selected.
-- API is permissive - on update will accept even fields we don't update
-- checkInterval is restricted to >10 seconds to prevent DOSing (although still possible to create many users each with the same endpoint)
-- custom messages not implemented 
-- [Problems](https://docs.spring.io/spring-hateoas/docs/1.1.0.M3/reference/html/#mediatypes.http-problem) are not 
-implemented, errors are returned with content-type JSON, not HAL_FORMS_JSON
-
-## Known issues
-### Gazer
-- client.get can't be mocked
-- actor (ro more likely channels) cause tests to go into infinite loop
-- gazer tests can only be run one class at a time
+* Ability to gaze from multiple (physical) locations
 
