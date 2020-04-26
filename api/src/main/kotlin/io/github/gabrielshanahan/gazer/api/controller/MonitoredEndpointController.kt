@@ -17,12 +17,6 @@ import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointReposito
 import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
 import io.github.gabrielshanahan.gazer.data.repository.UserRepository
 import io.github.gabrielshanahan.gazer.func.into
-import java.util.*
-import javax.validation.ConstraintViolationException
-import javax.validation.Valid
-import javax.validation.Validator
-import javax.validation.constraints.Min
-import javax.validation.groups.Default
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.validation.annotation.Validated
@@ -36,16 +30,22 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
+import javax.validation.ConstraintViolationException
+import javax.validation.Valid
+import javax.validation.Validator
+import javax.validation.constraints.Min
+import javax.validation.groups.Default
 
 @RestController
 @RequestMapping("/monitoredEndpoints")
 @Validated
-internal class MonitoredEndpointController(
+class MonitoredEndpointController(
     val endpointRepository: MonitoredEndpointRepository,
     val validator: Validator,
+    val resultRepository: MonitoringResultRepository,
     val resourceAssembler: MonitoredEndpointResourceAssembler,
     val responseAssembler: MonitoredEndpointResponseAssembler,
-    val resultRepository: MonitoringResultRepository,
     val resultResourceAssembler: MonitoringResultResourceAssembler,
     val resultResponseAssembler: MonitoringResultResponseAssembler,
     userRepository: UserRepository

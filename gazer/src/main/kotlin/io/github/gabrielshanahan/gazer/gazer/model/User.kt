@@ -18,7 +18,7 @@ data class User(
     )
 }
 
-fun UserEntity.asModel() = User(
+internal fun UserEntity.asModel() = User(
     id = id,
     username = username,
     email = email,

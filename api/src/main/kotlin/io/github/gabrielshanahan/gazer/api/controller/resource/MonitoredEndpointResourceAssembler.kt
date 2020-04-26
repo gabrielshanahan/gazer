@@ -16,7 +16,8 @@ internal typealias MonitoredEndpointModel = EntityModel<MonitoredEndpoint>
 internal typealias MonitoredEndpointCollectionModel = CollectionModel<MonitoredEndpointModel>
 
 @Component
-class MonitoredEndpointResourceAssembler : RepresentationModelAssembler<MonitoredEndpoint, MonitoredEndpointModel> {
+class MonitoredEndpointResourceAssembler :
+    RepresentationModelAssembler<MonitoredEndpoint, MonitoredEndpointModel> {
 
     override fun toModel(endpoint: MonitoredEndpoint): MonitoredEndpointModel =
         EntityModel.of(endpoint).apply {

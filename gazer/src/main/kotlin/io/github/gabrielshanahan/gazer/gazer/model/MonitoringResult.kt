@@ -20,7 +20,7 @@ data class MonitoringResult(
     )
 }
 
-fun MonitoringResultEntity.asModel() = MonitoringResult(
+internal fun MonitoringResultEntity.asModel() = MonitoringResult(
     id = id,
     checked = checked,
     httpStatus = httpStatus,

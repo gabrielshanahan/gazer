@@ -2,7 +2,6 @@ package io.github.gabrielshanahan.gazer.api.controller.response
 
 import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultCollectionModel
 import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultModel
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultResourceAssembler
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
@@ -11,9 +10,7 @@ internal typealias MonitoringResultModelResponse = ResponseEntity<MonitoringResu
 internal typealias MonitoringResultCollectionResponse = ResponseEntity<MonitoringResultCollectionModel>
 
 @Component
-internal class MonitoringResultResponseAssembler(
-    val monitoredEndpointModelAssembler: MonitoringResultResourceAssembler
-) {
+class MonitoringResultResponseAssembler {
     fun toOkResponse(endpointModel: MonitoringResultModel): MonitoringResultModelResponse =
         endpointModel into {
             ResponseEntity.ok().body(it)

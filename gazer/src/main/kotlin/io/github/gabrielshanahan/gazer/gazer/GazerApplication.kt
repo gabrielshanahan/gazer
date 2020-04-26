@@ -8,7 +8,6 @@ import io.github.gabrielshanahan.gazer.gazer.model.toShortStr
 import io.github.gabrielshanahan.gazer.gazer.properties.GazerProperties
 import io.github.gabrielshanahan.gazer.gazer.service.GazerService
 import io.github.gabrielshanahan.gazer.gazer.service.PersistMsg
-import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.SendChannel
@@ -22,19 +21,20 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.util.*
 
-internal data class Changes(
+data class Changes(
     val create: List<MonitoredEndpoint> = emptyList(),
     val update: List<MonitoredEndpoint> = emptyList(),
     val delete: Set<UUID> = emptySet()
 )
 
-internal data class Gazer(
+data class Gazer(
     val endpoint: MonitoredEndpoint,
     val job: Job
 )
 
-internal typealias GazerMap = MutableMap<UUID, Gazer>
+typealias GazerMap = MutableMap<UUID, Gazer>
 
 @SpringBootApplication
 class GazerApplication(
@@ -46,7 +46,7 @@ class GazerApplication(
 ) : CommandLineRunner, CoroutineScope by gazerScope {
     private val log: Logger = LoggerFactory.getLogger(GazerApplication::class.java)
 
-    internal infix fun GazerMap.collectChangesFrom(endpoints: List<MonitoredEndpoint>) = Changes(
+    infix fun GazerMap.collectChangesFrom(endpoints: List<MonitoredEndpoint>) = Changes(
         create = endpoints.filter {
             it.id !in keys
         },
@@ -58,7 +58,7 @@ class GazerApplication(
         }
     )
 
-    internal fun launchGazer(endpoint: MonitoredEndpoint): Job = launch {
+    fun launchGazer(endpoint: MonitoredEndpoint): Job = launch {
         log.info("Gazer created for ${endpoint.toShortStr()}")
         try {
             while (isActive) {
@@ -70,7 +70,7 @@ class GazerApplication(
         }
     }
 
-    internal fun update(gazers: GazerMap): Changes.() -> Unit = {
+    fun update(gazers: GazerMap): Changes.() -> Unit = {
         create.forEach {
             log.info("Creating gazer for ${it.toShortStr()}")
             gazers[it.id] = Gazer(it, launchGazer(it))
@@ -89,7 +89,7 @@ class GazerApplication(
         }
     }
 
-    internal suspend fun gaze(gazers: GazerMap) {
+    suspend fun gaze(gazers: GazerMap) {
         while (isActive) {
             val fetchedEndpoints = endpointRepo.findAll().map { it.asModel() }
             gazers collectChangesFrom fetchedEndpoints into update(gazers)

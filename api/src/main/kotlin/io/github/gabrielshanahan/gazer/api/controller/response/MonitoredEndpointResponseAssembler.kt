@@ -2,7 +2,6 @@ package io.github.gabrielshanahan.gazer.api.controller.response
 
 import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointCollectionModel
 import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointModel
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointResourceAssembler
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.hateoas.IanaLinkRelations
 import org.springframework.http.ResponseEntity
@@ -12,9 +11,7 @@ internal typealias MonitoredEndpointModelResponse = ResponseEntity<MonitoredEndp
 internal typealias MonitoredEndpointCollectionResponse = ResponseEntity<MonitoredEndpointCollectionModel>
 
 @Component
-internal class MonitoredEndpointResponseAssembler(
-    val monitoredEndpointModelAssembler: MonitoredEndpointResourceAssembler
-) {
+class MonitoredEndpointResponseAssembler {
     fun toCreatedResponse(endpointModel: MonitoredEndpointModel): MonitoredEndpointModelResponse =
         endpointModel into {
             ResponseEntity

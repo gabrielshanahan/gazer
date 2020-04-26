@@ -6,12 +6,12 @@ import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultForbidden
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.model.MonitoringResultEntity
 import io.github.gabrielshanahan.gazer.data.model.UserEntity
-import java.util.*
-import kotlin.reflect.KClass
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
+import java.util.*
+import kotlin.reflect.KClass
 
 internal fun <R> AbstractController.withAuthedUser(token: String, action: (UserEntity) -> R) =
     (userRepository.getByToken(token) ?: throw InvalidGazerTokenException())

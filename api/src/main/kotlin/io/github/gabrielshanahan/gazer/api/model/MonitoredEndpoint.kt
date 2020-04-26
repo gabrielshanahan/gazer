@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY
 import io.github.gabrielshanahan.gazer.api.validation.NullOrNotBlank
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.model.MonitoredEndpointEntity
+import org.hibernate.validator.constraints.URL
 import java.util.*
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
-import org.hibernate.validator.constraints.URL
 
 data class MonitoredEndpoint(
     @field:JsonProperty(access = READ_ONLY)

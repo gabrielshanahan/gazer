@@ -32,7 +32,7 @@ class MonitoredEndpoint(
     )
 }
 
-fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint(
+internal fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint(
     id = id,
     name = name,
     url = url,

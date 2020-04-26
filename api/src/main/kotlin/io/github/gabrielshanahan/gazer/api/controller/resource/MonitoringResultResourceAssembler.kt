@@ -16,7 +16,8 @@ internal typealias MonitoringResultModel = EntityModel<MonitoringResult>
 internal typealias MonitoringResultCollectionModel = CollectionModel<MonitoringResultModel>
 
 @Component
-class MonitoringResultResourceAssembler : RepresentationModelAssembler<MonitoringResult, MonitoringResultModel> {
+class MonitoringResultResourceAssembler :
+    RepresentationModelAssembler<MonitoringResult, MonitoringResultModel> {
 
     override fun toModel(result: MonitoringResult): MonitoringResultModel =
         EntityModel.of(result).apply {

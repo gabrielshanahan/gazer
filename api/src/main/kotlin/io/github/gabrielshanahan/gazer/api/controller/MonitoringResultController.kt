@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/monitoringResults")
-internal class MonitoringResultController(
+class MonitoringResultController(
     val resultRepository: MonitoringResultRepository,
     val resourceAssembler: MonitoringResultResourceAssembler,
     val responseAssembler: MonitoringResultResponseAssembler,
