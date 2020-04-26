@@ -69,7 +69,7 @@ After this service has started, start the remaining two in any order
 
 ## Usage
 The API is available at `localhost:8080`. Authentication is done via token in a `GazerToken` header. There are two
-tokens hardcoded into the application to make testing simpler.
+users hardcoded into the application to make testing simpler.
 
 | User       | Token                                |
 |------------|--------------------------------------|
@@ -103,7 +103,7 @@ The app consists of 3 Spring services implemented across 4 modules and runs in 4
 
 ### Services
 * `data` - Responsible for initializing the database, creating the schema and loading the hardcoded users. Must not be started before DB is up and running.
-* `api` - Publishes the REST API and deals with all requests. Must not be started before `data has done its thing.
+* `api` - Publishes the REST API and deals with all requests. Must not be started before `data` has done its thing.
 * `gazer` - Runs the gazers. Must not be started before `data` has done its thing.
 
 ### Containers
@@ -147,8 +147,8 @@ release is not yet GA.
 [docker-entrypoint-initdb.d](https://hub.docker.com/_/mysql). All services currently use the same database user.
 * Volumes are not used, so `docker-compose down` removes the data. Use `docker-compose stop` if you want to keep it between runs.
 #### Gradle
-* When the *dev* profile is active, the data service spins up and exposes a H2 instance, to which the other services connect. Therefore, it is necessary to
-start the data service first (`./gradlew :data:bootRun`) and only after it has finished booting can the other services
+* When the *dev* profile is active, the `data` service spins up and exposes a H2 instance, to which the other services connect. Therefore, it is necessary to
+start the `data` service first (`./gradlew :data:bootRun`) and only after it has finished booting can the other services
 be started (`./gradlew :api:bootRun` and `./gradlew :gazer:bootRun`). No script is provided for this, since the expectation
 is that while developing, you want to execute these tasks in separate terminals to be able to read the applications output.
 
@@ -242,7 +242,7 @@ information. It is recommended to browse through before looking at the code.
 #### Nomenclature
 * Objects which directly represent database tables are called *entities* (these are contained in the `data` module).
 * Module-specific adapters for *entities* are called *models* - they loosen the coupling between the database schema and the data domain of the module.
-* Data computed by an endpoint, which is then enriched by links to related endpoints, is called a *resource*.
+* Data computed by an endpoint, which is enriched by links to related endpoints, is called a *resource*.
 * A *response* is what actually gets sent back, i.e. a *resource* + optional headers, HTTP status code, etc.
 #### Structure
 * Contains 4 packages:
@@ -251,7 +251,7 @@ information. It is recommended to browse through before looking at the code.
     * The **response** package contains code that creates *responses* out of *resources*.
   * The **exceptions** package defines domain-specific exceptions and handlers thereof.
   * The **model** package contains the *models*, functions for transforming between *models* and *entities*, and defines constraints on the data, i.e. which properties can be set and what values are acceptable. 
-  * The **validation** package contains code that handles validations, along with a custom NullOrNotBlank validation and OnCreate validation group.
+  * The **validation** package contains code that handles validations, along with a custom `NullOrNotBlank` validation and `OnCreate` validation group.
 #### Implementation
 * To facilitate simple testing, authentication is done by comparing a token sent in a `GazerToken` header to a hardcoded token in the database. This is done manually by each method of the controllers.
   * A (pretty lengthy) attempt was made to create a custom scheme using Spring Security that would support this method of authentication. One of the main motivations was the consequent ability to use Spring Data REST and get HATEOAS compliance OOTB. We actually almost succeeded, but due to problems with configuring endpoints which should be ignored combined with low confidence the solution wouldn't cause problems down the road, we decided to abandon this approach in the end. The work done can be found using `git log --full-history -- api/src/main/kotlin/io/github/gabrielshanahan/gazer/api/security`.
@@ -285,7 +285,7 @@ information. It is recommended to browse through before looking at the code.
 * The functionality is implemented as a `ComandLineRunner`.
 * When the service starts, one gazer per endpoint is launched. The database is periodically polled for the list of all endpoints and the results compared with the current sets of gazers, which are added/removed/updated as necessary. The default polling period is `1s` and can be controlled by the `gazer.syncRate` property.
   * Periodically fetching all the endpoints from the database would not scale well. An ideal design would facilitate communication of create/update/delete events across services through a messaging system.
-* A `supervisor scope` is used to prevent the failure of one gazer to affect the others.
+* A `supervisor scope` is used to prevent the failure of one gazer affecting the others.
 * Gazers don't deal with persistance, instead sending the results to a Kotlin `channel`. There are multiple reasons for this, ranging from separation of concerns to the fact that JDBC is blocking, and even if it wasn't, we can't guarantee a monitored interval if it's dependent on environmental factors such network latency, DB load etc., by design. 
 * A very simple actor based model is used to implement the `channel`. Kotlin `actors` are used for this, even though they are marked as obsolete. The reason is that we would just end up reimplementing exactly what is already there.
 * Backpressure between the actor and gazers is controlled by a buffer on the side of the actor. If the buffer is full, gazers attempting to send a new result `suspend` until room is made. By default, the buffer size is `1024` and can be controlled by the `gazer.bufferSize` property. If set to a negative number, the buffer becomes unlimited.
