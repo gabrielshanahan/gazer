@@ -20,7 +20,7 @@ internal typealias MonitoredEndpointCollectionModel = CollectionModel<MonitoredE
 
 /**
  * Responsible for constructing the resource for MonitoredEndpoint endpoints. A resource is understood to be the data
- * computed by an endpoints enriched by links to relevant related endpoints.
+ * computed by an endpoint enriched by links to relevant related endpoints.
  *
  * @see io.github.gabrielshanahan.gazer.api.controller.MonitoredEndpointController
  * @see io.github.gabrielshanahan.gazer.api.controller.response.MonitoredEndpointResponseAssembler
