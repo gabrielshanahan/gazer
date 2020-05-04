@@ -11,6 +11,7 @@ plugins {
 	id("org.jmailen.kotlinter") version "2.3.2"
 	id("io.gitlab.arturbosch.detekt") version "1.7.4"
 	id("org.jetbrains.dokka") version "0.10.1"
+    id("org.sonarqube") version "2.8"
 
     // Spring specific plugins
     kotlin("plugin.spring") version kotlinVersion apply false
@@ -27,6 +28,7 @@ allprojects {
 
     apply {
         plugin("java-library")
+        plugin("org.sonarqube")
     }
 
     group = "io.github.gabrielshanahan"
