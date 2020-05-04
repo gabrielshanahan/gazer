@@ -1,7 +1,7 @@
-package io.github.gabrielshanahan.gazer.api.controller.response
+package io.github.gabrielshanahan.gazer.api.service.response
 
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultCollectionModel
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultModel
+import io.github.gabrielshanahan.gazer.api.service.resource.MonitoringResultCollectionModel
+import io.github.gabrielshanahan.gazer.api.service.resource.MonitoringResultModel
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component

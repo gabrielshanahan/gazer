@@ -1,7 +1,7 @@
-package io.github.gabrielshanahan.gazer.api.controller.response
+package io.github.gabrielshanahan.gazer.api.service.response
 
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointCollectionModel
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoredEndpointModel
+import io.github.gabrielshanahan.gazer.api.service.resource.MonitoredEndpointCollectionModel
+import io.github.gabrielshanahan.gazer.api.service.resource.MonitoredEndpointModel
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.hateoas.IanaLinkRelations
 import org.springframework.http.ResponseEntity

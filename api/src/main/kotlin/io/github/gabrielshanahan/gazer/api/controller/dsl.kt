@@ -7,11 +7,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 
 /**
- * This action simply adds semantic meaning to the elvis operator in the context of this DSL. It is intended to be
- * used in conjunction with the authAndFind functions.
- *
- * @see MonitoredEndpointController.findOwned
- * @see MonitoringResultController.findOwned
+ * This action simply adds semantic meaning to the elvis operator in the context of this DSL.
  */
 internal infix fun <R> R?.orWhenNotFound(action: () -> R): R = this ?: action()
 

@@ -1,4 +1,4 @@
-package io.github.gabrielshanahan.gazer.api.controller.resource
+package io.github.gabrielshanahan.gazer.api.service.resource
 
 import io.github.gabrielshanahan.gazer.api.controller.MonitoredEndpointController
 import io.github.gabrielshanahan.gazer.api.controller.RootController

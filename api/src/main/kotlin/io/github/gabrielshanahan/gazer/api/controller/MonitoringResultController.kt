@@ -1,13 +1,12 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
-import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultResourceAssembler
-import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultCollectionResponse
-import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultModelResponse
-import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultResponseAssembler
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultCollectionResponse
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultModelResponse
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.User
 import io.github.gabrielshanahan.gazer.api.security.Authenticated
 import io.github.gabrielshanahan.gazer.api.security.UserAuthentication
+import io.github.gabrielshanahan.gazer.api.service.MonitoringResultResponseService
 import io.github.gabrielshanahan.gazer.api.service.MonitoringResultService
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,17 +21,16 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/monitoringResults")
 class MonitoringResultController(
     val resultService: MonitoringResultService,
-    val resourceAssembler: MonitoringResultResourceAssembler,
-    val responseAssembler: MonitoringResultResponseAssembler
+    val responseService: MonitoringResultResponseService
 ) : UserAuthentication {
 
     override lateinit var user: User
 
-    /** Returns all MonitoringResults owned by given user. */
+    /** Returns all MonitoringResults owned by authenticated user. */
     @Authenticated
     @GetMapping("")
     fun getAll(): MonitoringResultCollectionResponse = with(resultService) {
-        findAll().toMutableList() into resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
+        findAll() into responseService::buildOk
     }
 
     /**
@@ -44,7 +42,6 @@ class MonitoringResultController(
     @Authenticated
     @GetMapping("/{id}")
     fun getById(@PathVariable id: String): MonitoringResultModelResponse = with(resultService) {
-        findOwn(id) orWhenNotFound { throw MonitoringResultNotFoundException(id) } into
-            resourceAssembler::toModel into responseAssembler::toOkResponse
+        findOwn(id) orWhenNotFound { throw MonitoringResultNotFoundException(id) } into responseService::buildOk
     }
 }
