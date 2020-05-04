@@ -1,6 +1,5 @@
 package io.github.gabrielshanahan.gazer.api.security
 
-import io.github.gabrielshanahan.gazer.api.controller.AuthedController
 import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MissingGazerTokenException
 import io.github.gabrielshanahan.gazer.api.service.TokenAuthenticationService
@@ -14,24 +13,20 @@ import org.springframework.web.context.request.ServletRequestAttributes
 
 @Aspect
 @Component
-class TokenAdvice(val tokenAuth: TokenAuthenticationService) {
+class AuthenticateByGazerToken(val tokenAuth: TokenAuthenticationService) {
 
-    @Pointcut("within(io.github.gabrielshanahan.gazer.api.controller.AuthedController+)")
-    fun isAuthedController() {}
+    @Pointcut("within(io.github.gabrielshanahan.gazer.api.security.UserAuthentication+)")
+    fun supportsUserAuthentication() {}
 
-    @Before("@annotation(auth) && isAuthedController() && execution(public * *(..))")
-    fun authUser(joinPoint: JoinPoint, auth: Authorized) {
-        if (!auth.enabled) {
+    @Before("@annotation(auth) && supportsUserAuthentication() && execution(public * *(..))")
+    fun authUser(joinPoint: JoinPoint, auth: Authenticated) {
+        if (!auth.required) {
             return
         }
 
         val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
-        val token = request.getHeader("GazerToken") ?: ""
+        val token = request.getHeader("GazerToken") ?: throw MissingGazerTokenException()
 
-        if (token.isEmpty()) {
-            throw MissingGazerTokenException()
-        }
-
-        (joinPoint.target as AuthedController).user = tokenAuth.getUser(token) ?: throw InvalidGazerTokenException()
+        (joinPoint.target as UserAuthentication).user = tokenAuth.getUser(token) ?: throw InvalidGazerTokenException()
     }
 }

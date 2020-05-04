@@ -11,10 +11,12 @@ import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.api.model.asModel
-import io.github.gabrielshanahan.gazer.api.security.Authorized
+import io.github.gabrielshanahan.gazer.api.security.Authenticated
+import io.github.gabrielshanahan.gazer.api.security.UserAuthentication
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
 import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
+import io.github.gabrielshanahan.gazer.data.entity.UserEntity
 import io.github.gabrielshanahan.gazer.data.repository.MonitoredEndpointRepository
 import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
 import io.github.gabrielshanahan.gazer.func.into
@@ -52,7 +54,9 @@ class MonitoredEndpointController(
     val responseAssembler: MonitoredEndpointResponseAssembler,
     val resultResourceAssembler: MonitoringResultResourceAssembler,
     val resultResponseAssembler: MonitoringResultResponseAssembler
-) : AuthedController() {
+) : UserAuthentication {
+
+    override lateinit var user: UserEntity
 
     /**
      * If [token] is valid, return all MonitoredEndpoints owned by given user, otherwise throw
@@ -60,7 +64,7 @@ class MonitoredEndpointController(
      *
      * @see withAuthedUser
      */
-    @Authorized
+    @Authenticated
     @GetMapping("")
     fun getAll(): MonitoredEndpointCollectionResponse = endpointRepository
         .getAllByUser(user)
@@ -75,7 +79,7 @@ class MonitoredEndpointController(
      * @see withAuthedUser
      * @see find
      */
-    @Authorized
+    @Authenticated
     @GetMapping("/{id}")
     fun getById(@PathVariable id: String): MonitoredEndpointModelResponse = find(id) { endpoint ->
         endpoint into resourceAssembler::toModel into responseAssembler::toOkResponse
@@ -92,7 +96,7 @@ class MonitoredEndpointController(
      * @see withAuthedUser
      * @see find
      */
-    @Authorized
+    @Authenticated
     @GetMapping("/{id}/monitoringResults")
     fun getRelatedResults(
         @PathVariable id: String,
@@ -116,7 +120,7 @@ class MonitoredEndpointController(
      *
      * @see withAuthedUser
      */
-    @Authorized
+    @Authenticated
     @Validated(Default::class, OnCreate::class)
     @PostMapping("")
     fun createEndpoint(
@@ -136,7 +140,7 @@ class MonitoredEndpointController(
      * @see withAuthedUser
      * @see find
      */
-    @Authorized
+    @Authenticated
     @PutMapping("/{id}")
     fun replaceEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
@@ -163,7 +167,7 @@ class MonitoredEndpointController(
      * [io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden] or
      * [MonitoredEndpointNotFoundException], depending on the situation.
      */
-    @Authorized
+    @Authenticated
     @DeleteMapping("/{id}")
     fun deleteEndpoint(
         @RequestHeader(value = "GazerToken") token: String,
