@@ -23,16 +23,22 @@ data class MonitoringResult(
     var monitoredEndpoint: MonitoredEndpoint? = null
 ) : AbstractModel<MonitoringResultEntity>() {
 
-    override fun fromEntity(entity: MonitoringResultEntity) {
-        id = entity.id
-        checked = entity.checked
-        httpStatus = entity.httpStatus
-        payload = entity.payload
-        monitoredEndpoint = entity.monitoredEndpoint.asModel()
-    }
-
     override fun transferTo(entity: MonitoringResultEntity): MonitoringResultEntity = entity
+
+    override fun asEntity(): MonitoringResultEntity = MonitoringResultEntity(
+        id = id,
+        checked = checked!!,
+        httpStatus = httpStatus!!,
+        payload = payload!!,
+        monitoredEndpoint = monitoredEndpoint!!.asEntity()
+    )
 }
 
 /** Helper extension function for conversion from entity to model */
-internal fun MonitoringResultEntity.asModel() = MonitoringResult().apply { fromEntity(this@asModel) }
+internal fun MonitoringResultEntity.asModel() = MonitoringResult(
+    id = id,
+    checked = checked,
+    httpStatus = httpStatus,
+    payload = payload,
+    monitoredEndpoint = monitoredEndpoint.asModel()
+)

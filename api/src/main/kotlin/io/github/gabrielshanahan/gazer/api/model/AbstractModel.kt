@@ -7,8 +7,7 @@ package io.github.gabrielshanahan.gazer.api.model
  * @see io.github.gabrielshanahan.gazer.data.entity.AbstractEntity
  */
 abstract class AbstractModel<T> {
-    /** Creates model from [entity] **/
-    abstract fun fromEntity(entity: T)
+    abstract fun asEntity(): T
 
     /** Transfers contents of model to [entity] */
     abstract infix fun transferTo(entity: T): T

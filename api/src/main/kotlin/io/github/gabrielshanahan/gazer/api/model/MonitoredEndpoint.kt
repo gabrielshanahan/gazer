@@ -40,16 +40,6 @@ data class MonitoredEndpoint(
     var user: User? = null
 ) : AbstractModel<MonitoredEndpointEntity>() {
 
-    override fun fromEntity(entity: MonitoredEndpointEntity) {
-        id = entity.id
-        name = entity.name
-        url = entity.url
-        created = entity.created
-        lastCheck = entity.lastCheck
-        monitoredInterval = entity.monitoredInterval
-        user = entity.user.asModel()
-    }
-
     override fun transferTo(entity: MonitoredEndpointEntity): MonitoredEndpointEntity {
         entity.name = name ?: entity.name
         entity.url = url ?: entity.url
@@ -57,7 +47,25 @@ data class MonitoredEndpoint(
 
         return entity
     }
+
+    override fun asEntity(): MonitoredEndpointEntity = MonitoredEndpointEntity(
+        id = id,
+        name = name!!,
+        url = url!!,
+        created = created,
+        lastCheck = lastCheck,
+        monitoredInterval = monitoredInterval!!,
+        user = user!!.asEntity()
+    )
 }
 
 /** Helper extension function for conversion from entity to model */
-internal fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint().apply { fromEntity(this@asModel) }
+internal fun MonitoredEndpointEntity.asModel() = MonitoredEndpoint(
+    id = id,
+    name = name,
+    url = url,
+    created = created,
+    lastCheck = lastCheck,
+    monitoredInterval = monitoredInterval,
+    user = user.asModel()
+)

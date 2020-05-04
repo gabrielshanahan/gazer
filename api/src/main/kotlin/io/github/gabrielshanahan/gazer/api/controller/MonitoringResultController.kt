@@ -4,14 +4,11 @@ import io.github.gabrielshanahan.gazer.api.controller.resource.MonitoringResultR
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultCollectionResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultModelResponse
 import io.github.gabrielshanahan.gazer.api.controller.response.MonitoringResultResponseAssembler
-import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultNotFoundException
-import io.github.gabrielshanahan.gazer.api.model.asModel
+import io.github.gabrielshanahan.gazer.api.model.User
 import io.github.gabrielshanahan.gazer.api.security.Authenticated
 import io.github.gabrielshanahan.gazer.api.security.UserAuthentication
-import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
-import io.github.gabrielshanahan.gazer.data.entity.UserEntity
-import io.github.gabrielshanahan.gazer.data.repository.MonitoringResultRepository
+import io.github.gabrielshanahan.gazer.api.service.MonitoringResultService
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,37 +21,30 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/monitoringResults")
 class MonitoringResultController(
-    val resultRepository: MonitoringResultRepository,
+    val resultService: MonitoringResultService,
     val resourceAssembler: MonitoringResultResourceAssembler,
     val responseAssembler: MonitoringResultResponseAssembler
 ) : UserAuthentication {
 
-    override lateinit var user: UserEntity
+    override lateinit var user: User
 
-    /**
-     * If [token] is valid, returns all MonitoringResults owned by given user, otherwise throws
-     * [InvalidGazerTokenException].
-     *
-     * @see withAuthedUser
-     */
+    /** Returns all MonitoringResults owned by given user. */
     @Authenticated
     @GetMapping("")
-    fun getAll(): MonitoringResultCollectionResponse = resultRepository
-        .getAllByMonitoredEndpointUserOrderByCheckedDesc(user)
-        .map(MonitoringResultEntity::asModel).toMutableList() into
-        resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
+    fun getAll(): MonitoringResultCollectionResponse = with(resultService) {
+        findAll().toMutableList() into resourceAssembler::toCollectionModel into responseAssembler::toOkResponse
+    }
 
     /**
-     * Checks [token] validity, then returns MonitoringResult given by [id]. Throws one of
-     * [InvalidGazerTokenException], [io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultForbidden] or
-     * [MonitoringResultNotFoundException], depending on the situation.
+     * Returns MonitoringResult given by [id].
      *
-     * @see withAuthedUser
-     * @see find
+     * Throws one of [io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultForbidden] or
+     * [MonitoringResultNotFoundException], depending on the situation.
      */
     @Authenticated
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: String): MonitoringResultModelResponse = find(id) { result ->
-        result into resourceAssembler::toModel into responseAssembler::toOkResponse
-    } orWhenNoneFound { throw MonitoringResultNotFoundException(id) }
+    fun getById(@PathVariable id: String): MonitoringResultModelResponse = with(resultService) {
+        findOwn(id) orWhenNotFound { throw MonitoringResultNotFoundException(id) } into
+            resourceAssembler::toModel into responseAssembler::toOkResponse
+    }
 }

@@ -1,10 +1,5 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
-import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointForbidden
-import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultForbidden
-import io.github.gabrielshanahan.gazer.data.entity.MonitoredEndpointEntity
-import io.github.gabrielshanahan.gazer.data.entity.MonitoringResultEntity
-import java.util.*
 import kotlin.reflect.KClass
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.afford
@@ -12,55 +7,13 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 
 /**
- * Runs [action] if [id] represents a MonitoredEndpoint owned by the given user.
- *
- * Returns null if no such id is found. Throws [MonitoredEndpointForbidden] if endpoint is found, but is owned by
- * different user.
- *
- * @see orWhenNoneFound
- * @see MonitoredEndpointController
- */
-internal fun <R> MonitoredEndpointController.find(
-    id: String,
-    action: (MonitoredEndpointEntity) -> R
-): R? = endpointRepository
-    .findById(UUID.fromString(id))
-    .map { fetchedEndpoint ->
-        if (fetchedEndpoint.user.id != user.id) {
-            throw MonitoredEndpointForbidden(id)
-        }
-        action(fetchedEndpoint)
-    }.orElse(null)
-
-/**
- * Runs [action] if [id] represents a MonitoringResult owned by the given user.
- *
- * Returns null if no such id is found. Throws [MonitoringResultForbidden] if endpoint is found, but is owned by
- * different user.
- *
- * @see orWhenNoneFound
- * @See MonitoringResultController
- */
-internal fun <R> MonitoringResultController.find(
-    id: String,
-    action: (MonitoringResultEntity) -> R
-): R? = resultRepository
-    .findById(UUID.fromString(id))
-    .map { fetchedResult ->
-        if (fetchedResult.monitoredEndpoint.user.id != user.id) {
-            throw MonitoringResultForbidden(id)
-        }
-        action(fetchedResult)
-    }.orElse(null)
-
-/**
  * This action simply adds semantic meaning to the elvis operator in the context of this DSL. It is intended to be
  * used in conjunction with the authAndFind functions.
  *
- * @see MonitoredEndpointController.find
- * @see MonitoringResultController.find
+ * @see MonitoredEndpointController.findOwned
+ * @see MonitoringResultController.findOwned
  */
-internal infix fun <R> R?.orWhenNoneFound(action: () -> R): R = this ?: action()
+internal infix fun <R> R?.orWhenNotFound(action: () -> R): R = this ?: action()
 
 /**
  * Exposes DSL methods specific to links and affordances, used when constructing resources.

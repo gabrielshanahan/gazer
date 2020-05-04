@@ -13,15 +13,20 @@ data class User(
     var token: String? = null
 ) : AbstractModel<UserEntity>() {
 
-    override fun fromEntity(entity: UserEntity) {
-        id = entity.id
-        username = entity.username
-        email = entity.email
-        token = entity.token
-    }
-
     override infix fun transferTo(entity: UserEntity): UserEntity = entity
+
+    override fun asEntity(): UserEntity = UserEntity(
+        id = id,
+        username = username!!,
+        email = email!!,
+        token = token!!
+    )
 }
 
 /** Helper extension function for conversion from entity to model */
-internal fun UserEntity.asModel() = User().apply { fromEntity(this@asModel) }
+internal fun UserEntity.asModel() = User(
+    id = id,
+    username = username,
+    email = email,
+    token = token
+)
