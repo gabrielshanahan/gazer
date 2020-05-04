@@ -3,7 +3,7 @@ package io.github.gabrielshanahan.gazer.api.security
 import io.github.gabrielshanahan.gazer.api.controller.AuthedController
 import io.github.gabrielshanahan.gazer.api.exceptions.InvalidGazerTokenException
 import io.github.gabrielshanahan.gazer.api.exceptions.MissingGazerTokenException
-import io.github.gabrielshanahan.gazer.api.service.TokenAuthorization
+import io.github.gabrielshanahan.gazer.api.service.TokenAuthenticationService
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
@@ -14,7 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 
 @Aspect
 @Component
-class TokenAdvice(val tokenAuth: TokenAuthorization) {
+class TokenAdvice(val tokenAuth: TokenAuthenticationService) {
 
     @Pointcut("within(io.github.gabrielshanahan.gazer.api.controller.AuthedController+)")
     fun isAuthedController() {}
