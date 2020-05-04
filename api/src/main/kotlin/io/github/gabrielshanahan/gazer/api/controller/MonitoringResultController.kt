@@ -1,13 +1,13 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
-import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultCollectionResponse
-import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultModelResponse
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoringResultNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.User
 import io.github.gabrielshanahan.gazer.api.security.Authenticated
 import io.github.gabrielshanahan.gazer.api.security.UserAuthentication
 import io.github.gabrielshanahan.gazer.api.service.MonitoringResultResponseService
 import io.github.gabrielshanahan.gazer.api.service.MonitoringResultService
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultCollectionResponse
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultModelResponse
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -1,8 +1,8 @@
 package io.github.gabrielshanahan.gazer.api.service
 
+import io.github.gabrielshanahan.gazer.api.model.MonitoringResult
 import io.github.gabrielshanahan.gazer.api.service.resource.MonitoringResultResourceAssembler
 import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultResponseAssembler
-import io.github.gabrielshanahan.gazer.api.model.MonitoringResult
 import io.github.gabrielshanahan.gazer.func.into
 import org.springframework.stereotype.Service
 

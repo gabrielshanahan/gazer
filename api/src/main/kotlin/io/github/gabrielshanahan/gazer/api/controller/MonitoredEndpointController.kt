@@ -1,8 +1,5 @@
 package io.github.gabrielshanahan.gazer.api.controller
 
-import io.github.gabrielshanahan.gazer.api.service.response.MonitoredEndpointCollectionResponse
-import io.github.gabrielshanahan.gazer.api.service.response.MonitoredEndpointModelResponse
-import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultCollectionResponse
 import io.github.gabrielshanahan.gazer.api.exceptions.MonitoredEndpointNotFoundException
 import io.github.gabrielshanahan.gazer.api.model.MonitoredEndpoint
 import io.github.gabrielshanahan.gazer.api.model.User
@@ -11,6 +8,9 @@ import io.github.gabrielshanahan.gazer.api.security.UserAuthentication
 import io.github.gabrielshanahan.gazer.api.service.MonitoredEndpointResponseService
 import io.github.gabrielshanahan.gazer.api.service.MonitoredEndpointService
 import io.github.gabrielshanahan.gazer.api.service.MonitoringResultResponseService
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoredEndpointCollectionResponse
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoredEndpointModelResponse
+import io.github.gabrielshanahan.gazer.api.service.response.MonitoringResultCollectionResponse
 import io.github.gabrielshanahan.gazer.api.validation.OnCreate
 import io.github.gabrielshanahan.gazer.func.into
 import javax.validation.Valid
