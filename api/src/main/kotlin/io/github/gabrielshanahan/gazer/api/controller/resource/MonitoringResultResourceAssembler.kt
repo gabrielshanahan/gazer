@@ -36,8 +36,8 @@ class MonitoringResultResourceAssembler :
         EntityModel.of(result).apply {
             hyperlinks<MonitoringResultController> {
                 add(
-                    selfLink { getById("", result.id.toString()) },
-                    link { "monitoredEndpoints" to getAll("") }
+                    selfLink { getById(result.id.toString()) },
+                    link { "monitoredEndpoints" to getAll() }
                 )
             }
         }
@@ -54,7 +54,7 @@ class MonitoringResultResourceAssembler :
     override fun toCollectionModel(endpoints: MutableIterable<MonitoringResult>): MonitoringResultCollectionModel =
         CollectionModel.of(endpoints.map(::toModel)).apply {
             hyperlinks<MonitoringResultController> {
-                add(selfLink { getAll("") })
+                add(selfLink { getAll() })
             }
 
             hyperlinks<RootController> {

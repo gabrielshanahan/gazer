@@ -37,17 +37,17 @@ class MonitoredEndpointResourceAssembler :
             hyperlinks<MonitoredEndpointController> {
                 add(
                     selfLink {
-                        getById("", endpoint.id.toString())
+                        getById(endpoint.id.toString())
                     } andAfford {
                         replaceEndpoint("", endpoint.id.toString(), MonitoredEndpoint())
                     } andAfford {
                         deleteEndpoint("", endpoint.id.toString())
                     },
                     link {
-                        "monitoringResults" to getRelatedResults("", endpoint.id.toString())
+                        "monitoringResults" to getRelatedResults(endpoint.id.toString())
                     },
                     link {
-                        "monitoredEndpoints" to getAll("")
+                        "monitoredEndpoints" to getAll()
                     }
                 )
             }
@@ -66,9 +66,9 @@ class MonitoredEndpointResourceAssembler :
         CollectionModel.of(endpoints.map(::toModel)).apply {
             hyperlinks<MonitoredEndpointController> {
                 add(selfLink {
-                    getAll("")
+                    getAll()
                 } andAfford {
-                    createEndpoint("", MonitoredEndpoint())
+                    createEndpoint(MonitoredEndpoint())
                 })
             }
 

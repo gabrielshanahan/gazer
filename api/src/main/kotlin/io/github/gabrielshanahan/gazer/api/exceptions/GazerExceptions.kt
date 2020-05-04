@@ -7,6 +7,12 @@ sealed class GazerException(val gazerMsg: String) :
     RuntimeException(gazerMsg)
 
 /**
+ * Thrown when no token is provided.
+ */
+class MissingGazerTokenException :
+    GazerException("Missing GazerToken")
+
+/**
  * Thrown when no user with provided token is found.
  */
 class InvalidGazerTokenException :

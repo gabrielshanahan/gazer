@@ -2,10 +2,11 @@
 <SmellBaseline>
   <Blacklist></Blacklist>
   <Whitelist>
-    <ID>LongParameterList:MonitoredEndpointController.kt$MonitoredEndpointController$( val endpointRepository: MonitoredEndpointRepository, val validator: Validator, val resultRepository: MonitoringResultRepository, val resourceAssembler: MonitoredEndpointResourceAssembler, val responseAssembler: MonitoredEndpointResponseAssembler, val resultResourceAssembler: MonitoringResultResourceAssembler, val resultResponseAssembler: MonitoringResultResponseAssembler, userRepository: UserRepository )</ID>
+    <ID>EmptyFunctionBlock:TokenAdvice.kt$TokenAdvice${}</ID>
+    <ID>LongParameterList:MonitoredEndpointController.kt$MonitoredEndpointController$( val endpointRepository: MonitoredEndpointRepository, val validator: Validator, val resultRepository: MonitoringResultRepository, val resourceAssembler: MonitoredEndpointResourceAssembler, val responseAssembler: MonitoredEndpointResponseAssembler, val resultResourceAssembler: MonitoringResultResourceAssembler, val resultResponseAssembler: MonitoringResultResponseAssembler )</ID>
     <ID>MagicNumber:MonitoredEndpoint.kt$MonitoredEndpoint$10</ID>
     <ID>SpreadOperator:ApiApplication.kt$(*args)</ID>
-    <ID>UnnecessaryAbstractClass:AbstractController.kt$AbstractController</ID>
     <ID>UnnecessaryAbstractClass:AbstractModel.kt$AbstractModel&lt;T&gt;</ID>
+    <ID>UnnecessaryAbstractClass:AuthedController.kt$AuthedController</ID>
   </Whitelist>
 </SmellBaseline>

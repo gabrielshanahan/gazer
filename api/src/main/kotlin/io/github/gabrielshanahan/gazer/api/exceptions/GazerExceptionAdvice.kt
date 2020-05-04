@@ -21,6 +21,7 @@ internal class GazerExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(GazerException::class)
     fun handleException(ex: GazerException) = when (ex) {
+        is MissingGazerTokenException -> HttpStatus.BAD_REQUEST
         is InvalidGazerTokenException -> HttpStatus.UNAUTHORIZED
         is EntityNotFoundException -> HttpStatus.NOT_FOUND
         is EntityForbidden -> HttpStatus.FORBIDDEN

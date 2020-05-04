@@ -27,11 +27,11 @@ class RootController {
         } withRel IanaLinkRelations.SELF into model::add
 
         linkTo<MonitoredEndpointController> {
-            getAll("")
+            getAll()
         } withRel "monitoredEndpoints" into model::add
 
         linkTo<MonitoringResultController> {
-            getAll("")
+            getAll()
         } withRel "monitoringResults" into model::add
 
         return ResponseEntity.ok(model)

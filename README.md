@@ -165,8 +165,6 @@ rest in each module.
 * The root `build.gradle.kts` contains configurations and plugins used throughout the project. Some of those are necessary to make Spring and Kotlin play nice together.
 * Services are built using the `bootJar` gradle task, which creates a `<module>-<version>-boot.jar` file in `<module>/build/libs`.
 * If a module is needed as a regular dependency, it is built using the `jar` task, which creates a `<module>-<version>.jar` file in `<module>/build/libs`.
-#### JUnit5
-* JUnit is configured to run tests concurrently.
 #### [ktlint](https://ktlint.github.io/)
 * Via. [kotlinter](https://github.com/jeremymailen/kotlinter-gradle) plugin.
 * Adds `lintKotlin` and `formatKotlin` tasks. The former just lints, the latter also does the necessary formatting.
