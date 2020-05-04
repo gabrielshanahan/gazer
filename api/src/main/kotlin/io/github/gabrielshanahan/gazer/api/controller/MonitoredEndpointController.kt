@@ -114,7 +114,7 @@ class MonitoredEndpointController(
             updatedEndpoint into responseService::updated
         } orWhenNotFound {
             // Is there a better way?
-            validate(endpoint)
+            validateForCreation(endpoint)
             create(endpoint) into responseService::created
         }
     }
